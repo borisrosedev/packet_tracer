@@ -1,0 +1,109 @@
+= Configurer un serveur DHCP
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
+
+== Introduction
+
+Pour configurer un serveur DHCP dans Cisco Packet Tracer pour distribuer automatiquement des adresses IP:
+
+=== Ajouter les appareils nécessaires
+
+* Ajoutez un serveur qui jouera le rôle du serveur DHCP.
+* Ajoutez des PCs ou autres appareils clients qui recevront les adresses IP.
+* Ajoutez un switch pour connecter le serveur DHCP et les clients entre eux.
+
+== Connecter les appareils
+
+Utilisez des câbles Ethernet pour connecter les PCs et le serveur au switch.
+
+=== ...
+
+Vérifiez que les connexions sont bien établies et que les interfaces sont en bon état (lumière verte sur les connexions).
+
+
+== Configurer le serveur DHCP
+
+Cliquez sur le serveur pour ouvrir sa fenêtre de configuration.
+
+=== ...
+
+Allez dans l'onglet Config puis dans la section Services à gauche, sélectionnez DHCP.
+
+Activez le service DHCP en cochant la case "On".
+
+== Configurez le pool DHCP :
+
+****
+Pool Name (nom du pool) : Choisissez un nom pour le pool (par exemple, "Pool_1").
+****
+
+****
+Default Gateway (passerelle par défaut) : Indiquez l'adresse IP de la passerelle (par exemple, 192.168.1.1).
+****
+
+****
+DNS Server : Indiquez l'adresse du serveur DNS si nécessaire, ou laissez vide.
+****
+
+****
+Start IP Address : Spécifiez la première adresse IP du pool que le serveur DHCP va distribuer (par exemple, 192.168.1.10).
+****
+
+****
+Subnet Mask : Entrez le masque de sous-réseau approprié (par exemple, 255.255.255.0).
+****
+
+****
+Maximum Number of Users : Indiquez le nombre maximum de clients qui peuvent recevoir une adresse IP.
+****
+
+
+== Exemple de configuration :
+
+Pool Name : Pool_1
+Default Gateway : 192.168.1.1
+DNS Server : 8.8.8.8
+Start IP Address : 192.168.1.10
+Subnet Mask : 255.255.255.0
+Maximum Number of Users : 50
+
+=== ...
+
+Une fois la configuration terminée, cliquez sur Add pour ajouter le pool DHCP.
+
+
+== Configurer les clients (PCs)
+
+Cliquez sur un PC et allez dans l'onglet Desktop, puis sélectionnez IP Configuration.
+
+=== ...
+
+Choisissez DHCP pour que le PC obtienne automatiquement une adresse IP du serveur DHCP.
+
+
+=== ...
+
+Vous devriez voir que l'adresse IP, le masque de sous-réseau et la passerelle par défaut sont assignés automatiquement par le serveur DHCP.
+
+
+=== Tester la configuration
+
+Ouvrez la fenêtre de configuration de chaque PC et vérifiez que chacun a bien reçu une adresse IP du serveur DHCP.
+
+=== ...
+
+Utilisez la commande ping dans le terminal d'un PC pour vérifier la connectivité avec le serveur DHCP ou d'autres clients. 
+
+Par exemple :
+[source, bash]
+----
+ping 192.168.1.1
+----
+
+
+Si tout est configuré correctement, les clients recevront automatiquement une adresse IP et pourront communiquer avec les autres appareils du réseau.
+
+=== ...
+
+Cela vous permettra d'automatiser la gestion des adresses IP dans votre réseau.

@@ -1,0 +1,177 @@
+= Introduction
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
+
+Packet Tracer est un simulateur de réseaux développé par Cisco qui permet de concevoir, configurer et tester des réseaux dans un environnement virtuel. 
+
+== Installation et prise en main
+
+=== Téléchargement : 
+
+Vous pouvez télécharger Cisco Packet Tracer via le site de NetAcad après avoir créé un compte. 
+
+=== ...
+
+Il est disponible pour Windows, Linux et Mac (à partir de la version 8.0).
+
+== Interface : 
+
+L'interface de Packet Tracer se divise en plusieurs parties :
+
+=== Barre d'outils : 
+
+pour ajouter des composants réseau (routeurs, switches, ordinateurs, etc.).
+
+=== Zone de simulation : 
+
+l'endroit où vous placez les appareils et créez vos topologies réseau.
+
+=== Barre de simulation/réalité : 
+
+permet de basculer entre:
+[%step]
+* le mode simulation (pour observer le trafic réseau) 
+* le mode réel (exécution normale du réseau).
+
+
+=== Fenêtre des configurations : 
+
+pour configurer chaque appareil (interfaces, adresses IP, routage, etc.).
+
+
+
+== Création d'une topologie de base
+
+=== Ajout d'appareils : 
+
+Glissez et déposez les appareils du panneau de gauche vers la zone de simulation (routeurs, switches, ordinateurs, serveurs, etc.).
+
+=== Connexion des appareils : 
+
+Utilisez les câbles (droits, croisés ou fibres) pour relier les appareils entre eux.
+
+=== Configuration des appareils : 
+
+Cliquez sur un appareil pour accéder à sa configuration. 
+
+Vous pouvez configurer les interfaces, les adresses IP, activer le routage, et bien plus.
+
+
+== Commandes CLI (ligne de commande)
+
+Packet Tracer vous permet de travailler en mode CLI sur les appareils Cisco.
+
+== Exemples de commandes courantes :
+
+=== Configurer une interface :
+[source, bash]
+----
+enable
+configure terminal
+interface gig0/1
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+----
+
+
+=== Configurer le routage statique :
+[source, bash]
+----
+ip route 192.168.2.0 255.255.255.0 192.168.1.2
+----
+
+
+
+== Mode Simulation
+
+=== Observation du trafic : 
+
+En mode simulation, vous pouvez capturer et observer les paquets qui circulent sur votre réseau. Cela est utile pour comprendre les échanges de protocoles comme ARP, DNS, DHCP, ICMP, et plus.
+
+
+=== Visualisation : 
+
+Vous pouvez voir chaque étape du cheminement des paquets, leur source, destination et les processus qu'ils traversent.
+
+== Scénarios avancés
+
+=== VLANs : 
+
+Vous pouvez configurer des VLANs sur vos switches pour segmenter votre réseau.
+
+=== Exemple :
+[source, bash]
+----
+vlan 10
+name Marketing
+interface fastEthernet0/1
+switchport mode access
+switchport access vlan 10
+----
+
+=== Routage inter-VLAN : 
+
+Utilisez un routeur ou un switch de niveau 3 pour permettre la communication entre les VLANs.
+
+=== Routage dynamique (OSPF, EIGRP) : 
+
+Packet Tracer prend en charge plusieurs protocoles de routage, comme OSPF et EIGRP, pour configurer des topologies plus complexes.
+
+=== Exemple OSPF :
+[source, bash]
+----
+router ospf 1
+network 192.168.10.0 0.0.0.255 area 0
+----
+
+
+== Tests et dépannage
+
+=== Ping : 
+
+Utilisez la commande ping pour tester la connectivité entre les appareils.
+=== Traceroute : 
+
+La commande traceroute vous aide à diagnostiquer les chemins de routage.
+
+=== Capture de paquets : 
+
+Utilisez l'outil de capture intégré pour analyser les échanges de paquets.
+
+
+== Projets et examens
+
+Vous pouvez créer des projets réseau complexes et même utiliser Packet Tracer pour des examens ou des certifications Cisco. 
+
+=== ...
+
+Le simulateur est largement utilisé dans les cours Cisco Networking Academy pour la préparation à la certification CCNA.
+
+
+
+
+
+== Utilisation des protocoles réseau
+
+=== DHCP : 
+
+Configurer un serveur DHCP pour distribuer automatiquement des adresses IP.
+
+=== NAT (Network Address Translation) : 
+
+Configurez NAT sur vos routeurs pour permettre aux appareils internes d'accéder à Internet.
+
+=== QoS (Quality of Service) : 
+
+Vous pouvez également simuler la configuration de la QoS pour gérer le trafic réseau prioritaire.
+
+
+== Limitations de Packet Tracer
+
+Bien que très utile pour l'apprentissage et la simulation, Packet Tracer n'est pas un environnement de production et ne prend pas en charge tous les protocoles et fonctionnalités des équipements Cisco réels. 
+
+=== ...
+
+Pour des simulations plus avancées, des outils comme GNS3 ou des équipements physiques peuvent être nécessaires.
+

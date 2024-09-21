@@ -1,0 +1,188 @@
+= La Quality of Service (QoS)
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
+
+== Introduction
+
+La Quality of Service (QoS) est utilisée pour gérer le trafic réseau en attribuant des priorités aux différents types de trafic, ...
+
+
+=== ...
+
+
+afin de garantir que les applications critiques reçoivent une priorité plus élevée, tandis que le trafic moins important est traité en second. 
+
+=== ...
+
+Vous pouvez simuler la configuration de la QoS dans Cisco Packet Tracer pour définir ces priorités.
+
+
+=== ...
+
+Les étapes à suivre pour configurer la QoS dans un réseau avec Packet Tracer :
+
+
+== Création du réseau de base
+
+Ajoutez un routeur, un switch, des PCs, et éventuellement des téléphones IP ou des serveurs si vous souhaitez simuler du trafic VoIP ou des applications spécifiques.
+
+=== ...
+
+Connectez les PCs, téléphones IP et serveurs au switch, puis reliez le switch au routeur.
+
+=== ...
+
+Configurez les adresses IP de chaque appareil dans les sous-réseaux correspondants.
+
+
+== Accéder à la configuration du routeur
+
+Sélectionnez le routeur, cliquez sur l'onglet CLI.
+
+=== ...
+
+Entrez en mode privilégié avec la commande enable, puis entrez en mode de configuration globale avec la commande configure terminal.
+
+=== ...
+
+
+== Configurer une liste d'accès (ACL) pour identifier le trafic
+
+Utilisez une Access Control List (ACL) pour identifier le type de trafic que vous voulez prioriser. 
+
+=== ...
+
+Par exemple, pour prioriser le trafic provenant d'une adresse IP spécifique (comme un serveur ou un téléphone IP).
+
+=== ...
+
+Exemple d'ACL pour identifier le trafic venant du serveur (192.168.1.10) :
+
+[source, bash]
+----
+access-list 100 permit ip host 192.168.1.10 any
+----
+
+
+== Configurer une classe de trafic (Class-map)
+
+Définissez une class-map pour classifier le trafic que vous avez identifié avec l'ACL.
+
+=== ...
+
+Exemple pour classifier le trafic venant du serveur avec l'ACL 100 :
+
+[source, bash]
+----
+class-map match-all PRIORITY_TRAFFIC
+match access-group 100
+----
+
+
+== Configurer une politique de QoS (Policy-map)
+
+Créez une policy-map pour spécifier ce que vous voulez faire avec ce trafic (exemple : lui donner une priorité plus élevée).
+
+=== ...
+
+Exemple pour donner une priorité élevée au trafic de la classe définie :
+
+[source, bash]
+----
+policy-map PRIORITY_POLICY
+class PRIORITY_TRAFFIC
+priority 1000
+----
+
+
+=== ...
+
+Ici, la commande priority 1000 signifie que ce trafic obtiendra une bande passante prioritaire de 1000 kbps.
+
+=== ...
+
+Vous pouvez également utiliser d'autres commandes comme bandwidth, police, ou shape pour configurer la gestion de la bande passante.
+
+== Appliquer la QoS à une interface
+
+Appliquez la policy-map à l'interface du routeur qui gère le trafic que vous souhaitez prioriser (par exemple, l'interface connectée au réseau LAN ou à Internet).
+
+=== Exemple :
+
+[source, bash]
+----
+interface gig0/1
+service-policy output PRIORITY_POLICY
+----
+
+=== ...
+
+Cela signifie que la politique de QoS sera appliquée sur le trafic sortant de l'interface gig0/1.
+
+
+== Configurer les autres classes de trafic (optionnel)
+
+Si vous avez différents types de trafic (par exemple, du trafic VoIP, du trafic web, etc.), vous pouvez créer plusieurs classes de trafic avec des politiques différentes.
+
+
+== Vérification de la configuration QoS
+
+Utilisez les commandes suivantes pour vérifier la configuration et les statistiques QoS :
+
+=== ...
+
+Pour afficher la configuration des policies sur une interface :
+
+[source, bash]
+----
+show policy-map interface gig0/1
+----
+
+=== ...
+
+Pour vérifier les statistiques des classes :
+[source, bash]
+----
+show class-map
+----
+
+=== ...
+
+Pour vérifier les politiques configurées :
+[source, bash]
+----
+show policy-map
+----
+
+== Tester la QoS
+
+Une fois la QoS configurée, vous pouvez simuler du trafic en utilisant les outils de simulation de Packet Tracer, comme le ping ou la génération de trafic entre les appareils pour voir l'impact de la QoS sur le flux réseau. 
+
+=== Pour cela :
+
+Cliquez sur un appareil comme un PC ou un téléphone IP et utilisez l'outil Ping pour vérifier la latence.
+
+=== ...
+
+Vous pouvez aussi envoyer du trafic simultanément depuis plusieurs appareils et voir comment la QoS gère les différentes priorités.
+
+
+=== Résumé des étapes :
+
+* Créez le réseau et connectez les appareils.
+* Configurez une ACL pour identifier le trafic.
+* Configurez une class-map pour classifier le trafic.
+* Créez une policy-map pour définir les priorités et limites.
+* Appliquez la QoS sur les interfaces du routeur.
+* Vérifiez et testez la configuration QoS.
+
+=== ...
+
+En configurant correctement la QoS, vous pourrez assurer que le trafic important (comme la VoIP ou les services critiques) obtient une priorité plus élevée par rapport au trafic de moindre importance (comme le trafic web ordinaire).
+
+
+
+
+
+

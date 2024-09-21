@@ -1,0 +1,186 @@
+= Les Access Control Lists (ACLs)
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
+
+== Introduction
+
+Les Access Control Lists (ACLs) sont des outils essentiels pour contrôler le trafic dans un réseau en permettant ou bloquant des paquets en fonction de différents critères, comme:
+[%step]
+* l'adresse IP source ou destination, 
+* les protocoles, 
+* les ports.
+
+
+== Scénario de base
+
+Vous avez un réseau simple avec un routeur, plusieurs PCs connectés via un switch, et vous voulez configurer des ACLs pour permettre ou bloquer l'accès à certains services ou réseaux.
+
+=== Création du réseau
+
+Ajoutez un routeur, un switch, et plusieurs PCs dans Packet Tracer.
+Reliez les PCs au switch et connectez le switch au routeur.
+Configurez les adresses IP sur chaque appareil (ex : 192.168.1.0/24 pour les PCs).
+
+
+=== Accéder à la CLI du routeur
+
+Cliquez sur le routeur et accédez à l'onglet CLI.
+Entrez en mode privilégié avec la commande enable, puis en mode de configuration globale avec configure terminal.
+
+
+== Configuration d'une ACL standard
+
+Les ACLs standards contrôlent le trafic basé uniquement sur l'adresse IP source. 
+
+Vous pouvez autoriser ou bloquer des paquets en fonction de leur adresse IP source.
+
+****
+.Exemple : 
+Bloquer tout trafic venant de l'adresse IP 192.168.1.10.
+****
+
+Créez une ACL standard avec la commande suivante :
+[source, bash]
+----
+access-list 1 deny 192.168.1.10
+access-list 1 permit any
+----
+
+
+Ici :
+La première ligne bloque le trafic venant de l'adresse IP 192.168.1.10.
+La deuxième ligne permet tout autre trafic.
+
+
+== Appliquer l'ACL à une interface
+
+Une fois l'ACL créée, il faut l'appliquer à une interface du routeur pour qu'elle soit effective. Vous pouvez appliquer l'ACL en inbound (trafic entrant) ou en outbound (trafic sortant) sur l'interface.
+
+=== Exemple : Appliquer l'ACL sur l'interface LAN gig0/1 en inbound :
+
+[source, bash]
+----
+interface gig0/1
+ip access-group 1 in
+exit
+----
+
+=== ...
+
+Cela signifie que le trafic entrant sur l'interface gig0/1 sera filtré par l'ACL 1.
+
+
+== Configuration d'une ACL étendue
+
+Les ACLs étendues permettent de filtrer le trafic en fonction de plusieurs critères, comme:
+[%step]
+* l'adresse IP source, 
+* l'adresse IP destination, 
+* le protocole,
+* les numéros de ports.
+
+=== Exemple : 
+
+Bloquer le trafic HTTP (port 80) venant de 192.168.1.10 vers n'importe quelle destination.
+
+=== ...
+
+Créez une ACL étendue :
+[source, bash]
+----
+access-list 100 deny tcp host 192.168.1.10 any eq 80
+access-list 100 permit ip any any
+----
+La première ligne bloque le trafic TCP provenant de l'IP 192.168.1.10 à destination de n'importe quelle IP sur le port 80 (HTTP).
+La deuxième ligne permet tout autre trafic.
+=== ...
+
+Appliquez-la sur l'interface LAN du routeur :
+
+[source, bash]
+----
+interface gig0/1
+ip access-group 100 in
+----
+
+
+== Vérification de la configuration
+
+Utilisez les commandes suivantes pour vérifier l'application de l'ACL et les statistiques :
+
+Pour afficher toutes les ACL configurées :
+[source, bash]
+----
+show access-lists
+----
+
+
+Pour vérifier les interfaces et les ACL appliquées :
+[source, bash]
+----
+show ip interface gig0/1
+----
+
+
+== Tester la configuration
+
+Depuis les PCs connectés, utilisez l'outil ping pour tester la connectivité entre les appareils.
+
+=== ...
+
+Vous pouvez aussi utiliser des outils spécifiques comme un navigateur web sur les PCs pour tester l'accès aux services bloqués (exemple : tester si l'accès HTTP est bloqué depuis 192.168.1.10).
+
+
+== Exemple complet de configuration
+
+Configuration d'une ACL étendue sur un réseau où vous souhaitez bloquer le trafic HTTP (port 80) depuis l'IP 192.168.1.10 tout en permettant les autres types de trafic :
+
+=== Accéder à la CLI :
+
+[source, bash]
+----
+enable
+configure terminal
+----
+
+
+=== Créer une ACL étendue :
+
+[source, bash]
+----
+access-list 100 deny tcp host 192.168.1.10 any eq 80
+access-list 100 permit ip any any
+----
+
+=== Appliquer l'ACL sur l'interface LAN :
+
+[source, bash]
+----
+interface gig0/1
+ip access-group 100 in
+----
+
+=== Vérifier la configuration :
+
+[source, bash]
+----
+show access-lists
+----
+
+=== Résumé des étapes :
+
+
+* Créez le réseau et connectez les appareils.
+* Configurez l'ACL en définissant les règles de filtrage.
+* Appliquez l'ACL à l'interface.
+* Testez la configuration avec des outils comme ping ou un navigateur.
+
+
+
+
+
+
+
+
+

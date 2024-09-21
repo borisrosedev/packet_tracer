@@ -1,0 +1,163 @@
+= Configurer le Network Address Translation (NAT)
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
+
+== Introduction
+
+Pour configurer le Network Address Translation (NAT) sur un routeur dans Cisco Packet Tracer, suivez ces étapes. 
+
+=== ...
+
+Cela permettra aux appareils internes de votre réseau d'accéder à Internet en traduisant leurs adresses IP privées en une adresse IP publique. 
+
+== Architecture réseau de base
+
+== Routeur connecté à :
+
+* Réseau local (LAN) : Côté privé avec des adresses IP internes (ex. : 192.168.1.0/24).
+* Internet (WAN) : Côté public avec une adresse IP publique (ex. : 203.0.113.1/30).
+* Des PCs/clients connectés à un switch dans le réseau local.
+
+
+
+== Ajout et connexion des appareils
+
+Placez un routeur, un switch et des PCs.
+Reliez le routeur au switch et connectez les PC au switch.
+Reliez le routeur à un simulateur de cloud (comme l’icône Cloud dans Packet Tracer) pour simuler l'accès à Internet via le port WAN.
+
+== Configurer le réseau local (LAN) sur le routeur
+
+Cliquez sur le routeur, accédez à l'onglet CLI pour entrer les commandes.
+Entrez les commandes pour configurer l'interface LAN du routeur avec une adresse IP privée.
+
+=== Exemple de configuration pour l'interface LAN :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gig0/1
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+----
+
+
+== Configurer le réseau WAN sur le routeur
+
+Configurez l'interface connectée au côté public (WAN) avec une adresse IP publique.
+
+
+Exemple de configuration pour l'interface WAN (203.0.113.1/30) :
+
+[source, bash]
+----
+interface gig0/0
+ip address 203.0.113.1 255.255.255.252
+no shutdown
+exit
+----
+
+
+== Configurer une route par défaut (Default Route)
+
+Pour permettre au routeur d'envoyer des paquets non locaux vers Internet, configurez une route par défaut.
+
+=== Exemple :
+
+[source, bash]
+----
+ip route 0.0.0.0 0.0.0.0 203.0.113.2
+----
+
+
+
+== Configurer NAT sur le routeur
+
+Il existe plusieurs types de NAT, mais ici, nous allons configurer un NAT dynamique qui traduit les adresses IP privées en une adresse IP publique (ou un pool d’adresses publiques).
+
+=== ...
+
+Déclarez une liste d'accès (Access Control List - ACL) pour définir quelles adresses IP internes seront traduites (en général, toutes les adresses privées de votre LAN).
+
+
+=== Exemple pour le réseau 192.168.1.0/24 :
+
+[source, bash]
+----
+access-list 1 permit 192.168.1.0 0.0.0.255
+----
+
+=== ...
+
+Déclarez l'interface WAN comme l'interface NAT extérieure.
+[source, bash]
+----
+interface gig0/0
+ip nat outside
+exit
+----
+
+=== ...
+
+Déclarez l'interface LAN comme l'interface NAT intérieure.
+
+[source, bash]
+----
+interface gig0/1
+ip nat inside
+exit
+----
+
+Configurez la translation NAT pour traduire les adresses IP internes en l'adresse IP publique.
+
+
+[source, bash]
+----
+ip nat inside source list 1 interface gig0/0 overload
+----
+
+
+
+Ici, l'option overload permet d'utiliser la même adresse IP publique pour plusieurs adresses internes (c'est ce qu'on appelle la NAT avec surcharge ou PAT – Port Address Translation).
+
+
+== Configurer les clients (PCs)
+
+Cliquez sur chaque PC et accédez à la configuration IP.
+
+=== ...
+
+Configurez chaque PC pour obtenir une adresse IP dans le réseau privé (192.168.1.0/24) et configurez la passerelle par défaut pour être l'adresse IP du routeur (192.168.1.1).
+
+=== ...
+
+Ou configurez les PCs pour recevoir des adresses IP via DHCP si un serveur DHCP est configuré.
+
+== Tester la connectivité
+
+Depuis un PC dans le LAN, utilisez la commande ping pour vérifier l'accès à une adresse IP sur Internet (par exemple, 8.8.8.8).
+
+=== ...
+
+Si tout est bien configuré, les PCs du réseau local devraient pouvoir accéder à Internet, et le NAT sur le routeur traduira les adresses privées en une adresse publique.
+ 
+=== Commandes de vérification :
+
+Vérifier la configuration NAT :
+[source, bash]
+----
+show ip nat translations
+----
+
+Vérifier la configuration des interfaces :
+[source, bash]
+----
+show ip interface brief
+----
+
+=== ...
+
+Cette configuration de NAT permet aux appareils de votre réseau privé d'accéder à Internet tout en gardant leurs adresses IP internes cachées du monde extérieur.
