@@ -13,17 +13,17 @@ link:./introduction.html[Introduction]
 
 === Le matériel
 
-link:./cables.adoc[Les câbles]
-link:./switches.adoc[Les switchs]
-link:./routeurs.adoc[Les routeurs]
+* link:./cables.adoc[Les câbles]
+* link:./switches.adoc[Les switchs]
+* link:./routeurs.adoc[Les routeurs]
 
 === Les applications
 
-link:./config-serveur-dhcp.html[Configurer un serveur DHCP]
-link:./config-nat.html[Configurer une NAT]
-link:./config-acl.html[Configurer une ACL]
-link:./config-qos.html[Configurer une QOS]
-link:./config-vlan.html[Congigurer une VLAN]
+* link:./config-serveur-dhcp.html[Configurer un serveur DHCP]
+* link:./config-nat.html[Configurer une NAT]
+* link:./config-acl.html[Configurer une ACL]
+* link:./config-qos.html[Configurer une QOS]
+* link:./config-vlan.html[Congigurer une VLAN]
 
 
 //-----------------------------------------------------
@@ -36,16 +36,16 @@ link:./introduction.adoc[Introduction]
 
 === Le matériel
 
-link:./cables.html[Les câbles]
-link:./switches.html[Les switchs]
-link:./routeurs.html[Les routeurs]
+* link:./cables.html[Les câbles]
+* link:./switches.html[Les switchs]
+* link:./routeurs.html[Les routeurs]
 
 === Les applications
 
-link:./config-serveur-dhcp.adoc[Configurer un serveur DHCP]
-link:./config-nat.adoc[Configurer une NAT]
-link:./config-acl.adoc[Configurer une ACL]
-link:./config-qos.adoc[Configurer une QOS]
-link:./config-vlan.html[Congigurer une VLAN]
+* link:./config-serveur-dhcp.adoc[Configurer un serveur DHCP]
+* link:./config-nat.adoc[Configurer une NAT]
+* link:./config-acl.adoc[Configurer une ACL]
+* link:./config-qos.adoc[Configurer une QOS]
+* link:./config-vlan.html[Congigurer une VLAN]
 
 
