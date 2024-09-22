@@ -35,10 +35,14 @@ Les ACLs standards contrôlent le trafic basé uniquement sur l'adresse IP sourc
 
 Vous pouvez autoriser ou bloquer des paquets en fonction de leur adresse IP source.
 
+=== ...
+
 ****
 .Exemple : 
 Bloquer tout trafic venant de l'adresse IP 192.168.1.10.
 ****
+
+=== ...
 
 Créez une ACL standard avec la commande suivante :
 [source, bash]
@@ -47,6 +51,7 @@ access-list 1 deny 192.168.1.10
 access-list 1 permit any
 ----
 
+=== ...
 
 Ici :
 La première ligne bloque le trafic venant de l'adresse IP 192.168.1.10.
@@ -55,7 +60,12 @@ La deuxième ligne permet tout autre trafic.
 
 == Appliquer l'ACL à une interface
 
-Une fois l'ACL créée, il faut l'appliquer à une interface du routeur pour qu'elle soit effective. Vous pouvez appliquer l'ACL en inbound (trafic entrant) ou en outbound (trafic sortant) sur l'interface.
+Une fois l'ACL créée, il faut l'appliquer à une interface du routeur pour qu'elle soit effective. 
+
+
+=== ...
+
+Vous pouvez appliquer l'ACL en inbound (trafic entrant) ou en outbound (trafic sortant) sur l'interface.
 
 === Exemple : Appliquer l'ACL sur l'interface LAN gig0/1 en inbound :
 

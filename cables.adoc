@@ -1,8 +1,7 @@
 = Types de connexions réseau dans Packet Tracer
-:revealjs_theme: beige
+:revealjs_theme: league
 :source-highlighter: highlight.js
 :icons: font
-:stem:
 
 == ...
 
@@ -101,6 +100,9 @@ C’est le câble console utilisé pour accéder à la configuration d'un appare
 === Utilisation :
 
 Connexion entre un ordinateur et la console d'un routeur ou commutateur pour la configuration initiale.
+
+=== ...
+
 N’est pas utilisé pour la transmission de données réseau, mais plutôt pour l'administration et la gestion.
 
 == Connexion sans fil (Wireless)
@@ -158,5 +160,7 @@ Câbles coaxiaux utilisés pour connecter des périphériques dans des réseaux 
 === Utilisation :
 
 Principalement utilisé dans des réseaux Ethernet plus anciens.
+
+=== ...
 
 Ces types de câbles ont été remplacés par les câbles Ethernet à paires torsadées.

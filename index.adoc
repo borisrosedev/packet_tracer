@@ -11,13 +11,13 @@
 
 link:./introduction.html[Introduction]
 
-=== Le matériel
+=== Le matériel (version HTML)
 
-* link:./cables.adoc[Les câbles]
-* link:./switches.adoc[Les switchs]
-* link:./routeurs.adoc[Les routeurs]
+* link:./cables.html[Les câbles]
+* link:./switches.html[Les switchs]
+* link:./routeurs.html[Les routeurs]
 
-=== Les applications
+=== Les applications (version HTML)
 
 * link:./config-serveur-dhcp.html[Configurer un serveur DHCP]
 * link:./config-nat.html[Configurer une NAT]
@@ -34,18 +34,18 @@ link:./introduction.html[Introduction]
 
 link:./introduction.adoc[Introduction]
 
-=== Le matériel
+=== Le matériel (version ADOC)
 
-* link:./cables.html[Les câbles]
-* link:./switches.html[Les switchs]
-* link:./routeurs.html[Les routeurs]
+* link:./cables.adoc[Les câbles]
+* link:./switches.adoc[Les switchs]
+* link:./routeurs.adoc[Les routeurs]
 
-=== Les applications
+=== Les applications (version ADOC)
 
 * link:./config-serveur-dhcp.adoc[Configurer un serveur DHCP]
 * link:./config-nat.adoc[Configurer une NAT]
 * link:./config-acl.adoc[Configurer une ACL]
 * link:./config-qos.adoc[Configurer une QOS]
-* link:./config-vlan.html[Congigurer une VLAN]
+* link:./config-vlan.adoc[Congigurer une VLAN]
 
 

@@ -1,5 +1,7 @@
 = Les types de switch de Packet Tracer
-
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
 
 == Introduction
 
