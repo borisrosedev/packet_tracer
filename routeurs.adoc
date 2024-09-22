@@ -1,5 +1,5 @@
 = Les types de routeur de Packet Tracer
-:revealjs_theme: beige
+:revealjs_theme: league
 :source-highlighter: highlight.js
 :icons: font
 
