@@ -1,0 +1,114 @@
+= Username
+
+La commande username dans la configuration des équipements Cisco permet de créer des utilisateurs avec différents niveaux de privilège et types d'authentification. 
+
+
+
+== 1. Privilèges d’accès
+
+Sur les équipements Cisco, il existe 16 niveaux de privilèges (0 à 15) :
+
+
+=== Niveau 0 : 
+
+Accès très restreint, uniquement aux commandes de base comme logout, enable, disable.
+
+=== Niveau 1 (Utilisateur) : 
+
+Niveau par défaut, donne accès à des commandes d'utilisateur basique (mode utilisateur).
+
+=== Niveaux 2 à 14 : 
+
+Intermédiaires, souvent non configurés par défaut, mais peuvent être personnalisés pour accorder des permissions spécifiques.
+
+=== Niveau 15 (Administrateur) : 
+
+Accès complet aux commandes de configuration et d'administration du dispositif (mode privilégié et configuration globale).
+
+=== ...
+
+Par défaut, la plupart des utilisateurs sont configurés avec des privilèges de niveau 1 (utilisateur) ou niveau 15 (administrateur), mais vous pouvez spécifier un niveau intermédiaire si vous souhaitez restreindre certaines commandes.
+
+
+== Exemple : Créer un utilisateur read-only avec un accès limité au niveau 1.
+
+[source, bash]
+----
+Switch(config)# username read-only privilege 1 secret ReadOnlyPassword
+----
+
+
+=== 2. Options d'authentification
+
+Cisco permet plusieurs types de mots de passe pour l’authentification :
+
+=== password : 
+
+Le mot de passe est stocké en texte clair (non recommandé pour des raisons de sécurité).
+
+
+=== secret : 
+
+Le mot de passe est chiffré avec un algorithme MD5. 
+
+=== ...
+
+Cela est plus sécurisé et empêche l'accès en texte clair (recommandé).
+
+== Exemple avec un mot de passe en clair (non sécurisé, à éviter en production) :
+
+[source, bash]
+----
+Switch(config)# username guest privilege 1 password GuestPass
+----
+
+
+== 3. Configurer des niveaux intermédiaires de privilège (Personnalisation)
+
+Vous pouvez attribuer des niveaux de privilège intermédiaires pour restreindre l'accès à certaines commandes spécifiques. 
+
+=== ...
+
+Par exemple, vous pourriez créer un utilisateur avec le niveau 5, qui a accès à quelques commandes privilégiées mais sans possibilité de modifier la configuration.
+
+
+== Exemple de configuration avec niveau intermédiaire (Niveau 5)
+Définir un utilisateur avec un niveau de privilège 5 :
+
+[source, ]
+Switch(config)# username monitor privilege 5 secret MonitorPass
+
+
+=== Associer des commandes spécifiques au niveau de privilège 5 :
+
+Vous pouvez attribuer des commandes spécifiques au niveau 5, comme par exemple show ip interface brief, en configurant ainsi :
+
+[source, bash]
+----
+Switch(config)# privilege exec level 5 show ip interface brief
+----
+
+Maintenant, l’utilisateur monitor pourra exécuter uniquement les commandes associées au niveau de privilège 5.
+
+
+== 4. Authentification par base de données locale ou via AAA (Authentication, Authorization, Accounting)
+
+
+En plus de la base de données locale, Cisco peut utiliser une authentification centralisée via des serveurs RADIUS ou TACACS+. 
+
+=== ...
+
+Cette configuration est courante pour des environnements avec plusieurs dispositifs et des besoins d'audit et de gestion centralisée des utilisateurs.
+
+=== ...
+
+Configurer un utilisateur pour l'authentification locale :
+
+[source, bash]
+----
+Switch(config)# username local-admin privilege 15 secret LocalAdminPass
+----
+
+
+Configurer AAA avec un serveur TACACS+ ou RADIUS pour gérer les utilisateurs de manière centralisée (requiert une configuration spécifique de AAA et d'un serveur externe).
+

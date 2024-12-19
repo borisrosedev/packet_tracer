@@ -1,0 +1,144 @@
+= Configuration pare-feu
+
+== Introduction
+
+Dans Cisco Packet Tracer, il est possible de simuler certaines configurations de pare-feu, de contrôle d'accès et de surveillance pour sécuriser un serveur. 
+=== ...
+
+Bien que Packet Tracer ne permette pas de configurer un serveur avec toutes les options de sécurité avancée comme on le ferait sur un serveur réel, ...
+
+=== ...
+
+vous pouvez utiliser des listes de contrôle d'accès (ACL) et filtrage de ports sur un routeur pour restreindre l'accès au serveur.
+
+
+== 1. Configurer des ACL pour restreindre l'accès au serveur
+
+Les listes de contrôle d'accès (ACL) permettent de définir des règles pour autoriser ...
+
+=== ...
+
+ou bloquer le trafic en fonction des adresses IP, des ports et des protocoles. 
+
+=== ...
+
+Dans Packet Tracer, vous pouvez appliquer des ACL sur un routeur qui filtre le trafic vers ...
+
+=== ...
+
+le serveur pour ne permettre l’accès qu’à des dispositifs spécifiques.
+
+== Exemple de configuration d'ACL pour protéger un serveur Syslog/NTP/SNMP
+
+=== Imaginons que :
+
+Votre serveur a l’adresse IP 192.168.20.10.
+
+=== ...
+
+Vous souhaitez restreindre l’accès au serveur pour n’autoriser que le trafic provenant du sous-réseau 192.168.10.0/24 (VLAN 10).
+
+=== ...
+
+Vous souhaitez bloquer tout le trafic non autorisé venant de l'extérieur.
+
+=== ...
+
+
+== Comment configurer une ACL sur un routeur pour appliquer ces règles :
+
+Créer une ACL étendue pour permettre uniquement les adresses autorisées à accéder aux services Syslog, NTP et SNMP sur le serveur.
+
+[source bash]
+----
+Router(config)# access-list 100 permit udp 192.168.10.0 0.0.0.255 host 192.168.20.10 eq 514   # Syslog (UDP 514)
+Router(config)# access-list 100 permit udp 192.168.10.0 0.0.0.255 host 192.168.20.10 eq 123   # NTP (UDP 123)
+Router(config)# access-list 100 permit udp 192.168.10.0 0.0.0.255 host 192.168.20.10 eq 161   # SNMP (UDP 161)
+Router(config)# access-list 100 deny ip any host 192.168.20.10
+----
+
+=== ...
+
+Cette ACL (numéro 100) autorise uniquement le sous-réseau 192.168.10.0/24 à accéder aux services Syslog, NTP, et SNMP du serveur. 
+
+=== ...
+
+Tout autre trafic vers l’adresse 192.168.20.10 est bloqué.
+
+
+=== ...
+
+Appliquer l’ACL à l’interface du routeur connectée au VLAN 20 (où se trouve le serveur) en entrée ou en sortie, selon le flux de trafic souhaité :
+
+[source, bash]
+----
+Router(config)# interface g0/1
+Router(config-if)# ip access-group 100 in
+----
+
+Ici, nous appliquons l'ACL en entrée (in) sur l'interface du routeur qui reçoit le trafic vers le serveur.
+
+
+== 2. Configurer le pare-feu avec un routeur dans Packet Tracer
+
+Bien que Packet Tracer ne dispose pas d'une vraie fonction de pare-feu comme un équipement dédié (ex. Cisco ASA), ...
+
+=== ...
+
+vous pouvez utiliser un routeur avec ACLs pour simuler des règles de pare-feu de base.
+
+=== ...
+
+Filtrer le trafic entrant et sortant pour restreindre l’accès aux services spécifiques et bloquer le trafic non essentiel.
+
+
+== Exemple de blocage de tout trafic HTTP/HTTPS vers le serveur :
+
+[source, bash]
+----
+Router(config)# access-list 101 deny tcp any host 192.168.20.10 eq 80
+Router(config)# access-list 101 deny tcp any host 192.168.20.10 eq 443
+Router(config)# access-list 101 permit ip any any
+----
+
+
+Appliquer l’ACL à l’interface appropriée du routeur pour bloquer le trafic HTTP/HTTPS vers le serveur.
+
+[source, bash]
+----
+Router(config)# interface g0/1
+Router(config-if)# ip access-group 101 in
+----
+
+
+== 3. Surveillance du serveur
+
+Sur Packet Tracer, vous pouvez simuler une surveillance basique en utilisant des outils SNMP. 
+
+
+Pour cela :
+
+=== Activer SNMP sur le serveur : 
+
+Dans les paramètres du serveur de Packet Tracer, activez SNMP et configurez une communauté (par exemple, public en lecture seule).
+
+=== ...
+
+
+Configurer le switch ou le routeur comme client SNMP pour surveiller l’état du serveur.
+
+[source, bash]
+----
+Switch(config)# snmp-server community public RO
+----
+
+=== ...
+
+Surveiller avec un autre dispositif (comme un ordinateur dans Packet Tracer) pour récupérer des informations SNMP depuis le switch ou le routeur.
+
+
+
+
+
+
+

@@ -1,0 +1,241 @@
+= Une panne d'un routeur
+
+
+== Introduction
+
+Pour simuler une panne d'un routeur ou d'un switch dans Cisco Packet Tracer et observer comment le réseau continue à fonctionner grâce aux solutions de redondance (comme HSRP, GLBP, ou STP), suivez les étapes ci-dessous. 
+
+=== ...
+
+
+Nous allons utiliser le protocole HSRP pour assurer la redondance entre deux routeurs. Ensuite, nous simulerons une panne sur l'un des routeurs et observerons le basculement automatique (failover).
+
+== 1. Création de la Topologie
+
+Ajoutez deux routeurs (R1 et R2) dans Cisco Packet Tracer.
+
+=== ...
+
+Ajoutez un switch et connectez-le aux deux routeurs via leurs interfaces GigabitEthernet.
+
+=== ...
+
+Ajoutez des PCs au switch pour simuler des utilisateurs sur un réseau local.
+Configurez les PCs pour utiliser une passerelle par défaut virtuelle (qui sera partagée par R1 et R2 via HSRP).
+
+
+== 2. Configurer HSRP sur les Routeurs
+
+Nous allons configurer HSRP sur les deux routeurs, ce qui créera une passerelle virtuelle commune pour les PCs. 
+
+=== ...
+
+En cas de panne de l'un des routeurs, le second prendra le relais automatiquement.
+
+Sur R1 (Routeur Principal)
+[source, bash]
+----
+enable
+configure terminal
+
+# Configuration de l'interface LAN (GigabitEthernet 0/0)
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+standby 1 ip 192.168.1.254
+standby 1 priority 110
+standby 1 preempt
+no shutdown
+exit
+----
+Sur R2 (Routeur Secondaire)
+[source, bash]
+----
+enable
+configure terminal
+
+# Configuration de l'interface LAN (GigabitEthernet 0/0)
+interface gigabitEthernet 0/0
+ip address 192.168.1.2 255.255.255.0
+standby 1 ip 192.168.1.254
+standby 1 priority 100
+standby 1 preempt
+no shutdown
+exit
+----
+
+
+=== Explication :
+
+=== standby 1 ip 192.168.1.254 : 
+
+Cette commande configure l'IP virtuelle (192.168.1.254) que les PCs utiliseront comme passerelle par défaut.
+
+=== standby 1 priority 110 :
+
+ R1 aura une priorité plus élevée (110), donc il sera le routeur actif.
+
+=== standby 1 preempt : 
+
+Active le basculement automatique (failover). Si R1 revient en ligne après une panne, il reprendra son rôle de routeur actif.
+
+== 3. Configurer les PCs
+
+Ajoutez des PCs au switch et configurez leurs adresses IP statiques :
+PC1 :
+Adresse IP : 192.168.1.10
+Passerelle par défaut : 192.168.1.254
+PC2 :
+Adresse IP : 192.168.1.11
+Passerelle par défaut : 192.168.1.254
+Ces PCs utiliseront l'IP virtuelle 192.168.1.254 comme passerelle par défaut. Cette IP sera gérée dynamiquement par HSRP.
+
+
+== 4. Vérification du Réseau Avant la Panne
+Vérifiez l'état de HSRP sur R1 et R2 pour vous assurer que HSRP est correctement configuré :
+
+Sur R1 (le routeur actif) :
+
+[source, bash]
+----
+show standby
+----
+
+
+Vous verrez que R1 est en état actif.
+
+Sur R2 (le routeur en veille) :
+
+[source, bash]
+----
+show standby
+----
+
+
+R2 doit être en état standby.
+
+Testez la connectivité entre les PCs et les autres équipements du réseau avec la commande ping. 
+
+Par exemple, à partir de PC1, essayez de pinger PC2 ou la passerelle virtuelle 192.168.1.254.
+
+
+== 5. Simuler la Panne d'un Routeur (Failover)
+
+
+Nous allons maintenant simuler une panne du routeur R1 (le routeur principal) en désactivant son interface.
+
+=== Étapes pour désactiver l'interface de R1 :
+
+=== Accédez au CLI de R1 :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+shutdown
+----
+
+
+En désactivant cette interface, R1 ne pourra plus être le routeur actif. R2 deviendra automatiquement le routeur actif pour gérer le trafic réseau.
+
+
+== 6. Observer la Réaction du Réseau
+
+Sur R2, vérifiez l'état de HSRP avec la commande suivante pour voir qu'il est devenu le routeur actif :
+
+[source, bash]
+----
+show standby
+----
+
+
+Testez la connectivité entre les PCs en lançant des pings depuis PC1 et PC2. Même après la panne de R1, la connectivité réseau devrait continuer à fonctionner sans interruption, car R2 a pris le relais.
+
+
+== 7. Récupération Après la Panne
+
+Une fois que R1 est remis en ligne, il doit automatiquement redevenir le routeur actif si la commande preempt est activée.
+
+Réactivez l'interface de R1 pour simuler son retour en ligne :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+no shutdown
+----
+
+== Vérifiez que R1 redevient le routeur actif avec la commande :
+
+[source, bash]
+----
+show standby
+----
+
+
+== 8. Simulation d'une Panne de Switch (Optionnel)
+
+
+Si vous souhaitez tester une panne de switch, vous pouvez déconnecter physiquement (dans Packet Tracer) le lien entre le switch et un des routeurs. 
+
+
+=== ...
+
+Par exemple, si vous déconnectez R1 du switch, R2 prendra automatiquement le relais grâce à HSRP.
+
+== 9. Résumé des Commandes Utilisées
+Configurer HSRP sur R1 et R2 :
+
+[source, bash]
+----
+standby 1 ip 192.168.1.254
+standby 1 priority 110  (R1)
+standby 1 priority 100  (R2)
+standby 1 preempt
+----
+
+
+Vérifier l'état de HSRP :
+
+[source, bash]
+----
+show standby
+----
+
+
+=== Simuler une panne (désactiver l'interface de R1) :
+
+[source, bash]
+----
+interface gigabitEthernet 0/0
+shutdown
+----
+
+
+=== Réactiver une interface après panne :
+
+[source, bash]
+----
+interface gigabitEthernet 0/0
+no shutdown
+----
+
+
+== 10. Conclusion
+
+En utilisant HSRP, vous avez configuré un mécanisme de redondance réseau qui assure que le réseau continue à fonctionner même en cas de panne de l'un des routeurs. 
+
+=== ...
+
+
+La configuration de HSRP permet un basculement automatique (failover) entre les routeurs sans interruption pour les utilisateurs finaux.
+
+=== ...
+
+Ce type de simulation est essentiel pour comprendre comment assurer la haute disponibilité et la résilience dans des environnements de production. 
+
+
+
+
+

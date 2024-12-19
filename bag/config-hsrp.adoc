@@ -1,0 +1,274 @@
+= Le Hot Standby Router Protocol (HSRP) et le Gateway Load Balancing Protocol (GLBP)
+
+
+== Introduction
+
+Le Hot Standby Router Protocol (HSRP) et le Gateway Load Balancing Protocol (GLBP) sont des protocoles de redondance utilisés dans les réseaux pour garantir la haute disponibilité. 
+
+=== ...
+
+Ils permettent d'assurer que, même si un routeur devient indisponible, un autre routeur prendra automatiquement le relais, assurant ainsi la continuité du service. 
+
+
+== Scénario
+
+Nous avons deux routeurs (R1 et R2) sur un réseau local, agissant en tant que passerelles redondantes pour des utilisateurs connectés via un switch. 
+
+
+=== ...
+
+HSRP sera utilisé pour configurer un routeur actif et un routeur en veille (standby), tandis que GLBP répartira la charge entre les routeurs.
+
+=== Réseau local : 192.168.1.0/24
+R1 : 192.168.1.1
+R2 : 192.168.1.2
+
+
+=== IP virtuelle HSRP/GLBP : 192.168.1.254 (La passerelle virtuelle utilisée par les clients)
+
+
+== 1. Création de la Topologie dans Cisco Packet Tracer
+
+Ajoutez deux routeurs (R1 et R2) dans Packet Tracer.
+
+=== ...
+
+Ajoutez un switch connecté aux deux routeurs.
+
+=== ...
+
+Ajoutez des PCs ou hôtes au switch pour simuler des utilisateurs.
+Connectez les routeurs au switch avec leurs interfaces GigabitEthernet.
+
+== 2. Configurer HSRP (Hot Standby Router Protocol)
+
+HSRP permet à deux ou plusieurs routeurs de partager une adresse IP virtuelle, où un routeur sera actif et l'autre en veille. 
+
+=== ...
+
+En cas de panne du routeur actif, le routeur en veille devient actif.
+
+
+== Sur le Routeur R1 (Routeur Principal)
+
+Configurer l'interface LAN (GigabitEthernet 0/0) de R1 :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+standby 1 ip 192.168.1.254
+standby 1 priority 110
+standby 1 preempt
+no shutdown
+exit
+----
+
+
+=== standby 1 ip 192.168.1.254 : 
+
+Cette commande configure l'adresse IP virtuelle (192.168.1.254) pour le groupe HSRP.
+
+=== standby 1 priority 110 : 
+
+Définit la priorité de R1 à 110 (valeur plus élevée que celle par défaut de 100).
+
+=== standby 1 preempt : 
+
+Autorise le routeur à reprendre son rôle de routeur actif s'il revient en ligne après une panne.
+
+== Sur le Routeur R2 (Routeur de Secours)
+
+Configurer l'interface LAN (GigabitEthernet 0/0) de R2 :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ip address 192.168.1.2 255.255.255.0
+standby 1 ip 192.168.1.254
+standby 1 priority 100
+standby 1 preempt
+no shutdown
+exit
+----
+
+
+=== standby 1 priority 100 : 
+
+La priorité par défaut est 100. Ce routeur aura donc une priorité inférieure à celle de R1, il sera en mode standby.
+
+=== standby 1 preempt : 
+
+Si R1 revient en ligne, il récupérera automatiquement le rôle de routeur actif.
+
+
+== Test de HSRP
+
+Configurez l'adresse IP par défaut des PCs connectés au réseau pour qu'ils utilisent l'IP virtuelle 192.168.1.254 comme passerelle par défaut.
+
+
+
+=== Testez la redondance en désactivant l'interface GigabitEthernet de R1 (le routeur principal) :
+
+[source, bash]
+----
+interface gigabitEthernet 0/0
+shutdown
+----
+
+
+Observez comment R2 devient le routeur actif et prend le relais. 
+
+
+Vous pouvez le vérifier avec la commande suivante sur R2 :
+
+[source, bash]
+----
+show standby
+----
+
+Réactivez R1 et vérifiez qu'il reprend le rôle de routeur actif :
+
+
+[source, bash]
+----
+interface gigabitEthernet 0/0
+no shutdown
+----
+
+
+
+== 3. Configurer GLBP (Gateway Load Balancing Protocol)
+
+GLBP permet non seulement de fournir une redondance, mais également d'effectuer un équilibrage de charge entre plusieurs routeurs. 
+
+=== ...
+
+Il distribue les requêtes ARP de façon à ce que chaque routeur prenne en charge une partie du trafic réseau.
+
+Sur le Routeur R1 (GLBP Actif)
+
+=== Configurer l'interface LAN de R1 :
+
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+glbp 1 ip 192.168.1.254
+glbp 1 priority 120
+glbp 1 preempt
+no shutdown
+exit
+----
+
+
+=== glbp 1 ip 192.168.1.254 : 
+
+Configure l'adresse IP virtuelle pour le groupe GLBP.
+
+=== glbp 1 priority 120 : 
+
+Définit une priorité plus élevée pour ce routeur (R1) afin qu'il devienne le Gateway Active Virtual Router (AVR).
+
+=== glbp 1 preempt : 
+
+Permet à R1 de reprendre le rôle d'AVR s'il revient en ligne après une panne.
+
+
+=== Sur le Routeur R2 (GLBP en Backup)
+
+
+=== Configurer l'interface LAN de R2 :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ip address 192.168.1.2 255.255.255.0
+glbp 1 ip 192.168.1.254
+glbp 1 priority 100
+glbp 1 preempt
+no shutdown
+exit
+----
+
+
+
+=== glbp 1 priority 100 : 
+
+
+Définit une priorité plus faible pour R2. Il sera le routeur en backup mais participera à l'équilibrage de charge.
+
+
+=== Test de GLBP
+
+Configurez les PCs pour qu'ils utilisent l'IP 192.168.1.254 comme passerelle par défaut.
+
+
+=== Sur R1, vérifiez le statut de GLBP :
+
+[source, bash]
+----
+show glbp
+----
+Vous verrez que R1 est l'AVR, tandis que R2 est en mode backup. Mais les deux routeurs distribuent la charge du trafic.
+
+Simulez une panne sur R1 en désactivant l'interface GigabitEthernet :
+
+[source, bash]
+----
+interface gigabitEthernet 0/0
+shutdown
+----
+
+
+Observez comment R2 prend en charge tout le trafic. Vous pouvez également le vérifier avec :
+
+[source, bash]
+----
+show glbp
+----
+
+
+
+== 4. Vérification de la Configuration
+
+
+=== Pour HSRP :
+
+Vérifiez l'état du groupe HSRP avec la commande :
+
+[source, bash]
+----
+show standby
+----
+
+
+Cette commande montre le statut du routeur (actif ou standby), l'IP virtuelle utilisée, et la priorité du routeur.
+
+
+=== Pour GLBP :
+
+Utilisez la commande suivante pour voir le statut GLBP :
+
+[source, bash]
+----
+show glbp
+----
+
+=== ...
+
+Cela affichera des informations sur les rôles des routeurs dans le groupe GLBP (actif ou backup), ainsi que les adresses IP utilisées pour l'équilibrage de charge.
+
+
+
+
+

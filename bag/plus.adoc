@@ -1,0 +1,243 @@
+== Les choses à savoir
+
+== Compréhension des VLANs et Trunks
+
+=== VLANs (Virtual LANs) : 
+
+Séparez logiquement les réseaux pour améliorer la sécurité et la gestion du trafic.
+
+=== Trunking : 
+
+Permet la communication entre VLANs à travers un lien unique. Utilisez le protocole 802.1Q pour transporter plusieurs VLANs sur une seule interface.
+
+=== Inter-VLAN Routing
+
+Les VLANs ne communiquent pas entre eux par défaut, donc pour permettre la communication, il faut utiliser un routeur (router-on-a-stick) ou un switch de niveau 3 pour faire du routage inter-VLAN.
+
+
+Exercice : Créer un réseau avec plusieurs VLANs et configurer le routage inter-VLAN sur un routeur ou un switch multilayer.
+
+
+== Configuration de STP (Spanning Tree Protocol)
+
+STP empêche les boucles réseau. Apprendre à configurer STP est essentiel dans les topologies complexes avec plusieurs switchs.
+
+Exercice : Configurer STP pour s'assurer qu'il n'y a pas de boucles réseau dans une topologie avec plusieurs switchs en redondance.
+
+
+== Routage Dynamique (OSPF, EIGRP, BGP)
+
+Utilisez des protocoles de routage dynamiques pour permettre aux routeurs de s’adapter automatiquement aux changements de topologie. 
+
+Apprenez à configurer des protocoles comme OSPF (pour les grandes entreprises) ou EIGRP (pour des réseaux Cisco internes).
+
+Exercice : Implémenter une topologie avec plusieurs routeurs et configurer un protocole de routage dynamique comme OSPF ou EIGRP.
+
+== Sécurisation avec ACLs (Access Control Lists)
+
+Utilisez des ACLs pour restreindre le trafic entre les différentes parties du réseau. 
+
+
+Cela permet de renforcer la sécurité en définissant des règles qui permettent ou bloquent le trafic.
+
+=== ...
+
+Exercice : Configurer des ACLs pour bloquer l'accès à certains segments du réseau tout en permettant l'accès à d'autres.
+
+== Implémentation de QoS (Quality of Service)
+
+QoS permet de prioriser certains types de trafic (comme la voix ou la vidéo) pour assurer une meilleure qualité de service.
+
+=== ...
+
+Exercice : Configurer des politiques de QoS pour prioriser la bande passante pour certaines applications ou utilisateurs dans le réseau.
+
+== Configurer des WANs et VPNs
+
+Apprenez à simuler des connexions WAN et à configurer des VPNs pour des topologies réseau distribuées.
+Exercice : Créer une topologie avec deux sites distants reliés par un lien WAN et configurez un VPN entre eux.
+
+== Hautes Disponibilités et Redondance
+
+Mettez en place des mécanismes de redondance comme HSRP (Hot Standby Router Protocol) ou GLBP pour assurer une continuité de service même en cas de défaillance d’un équipement réseau.
+Exercice : Configurer HSRP pour avoir une redondance entre deux routeurs.
+
+== Simulations de failover et recovery
+
+Apprenez à gérer des scénarios de basculement (failover) en simulant des pannes d'équipements et en configurant des solutions de secours.
+Exercice : Simuler la panne d’un routeur ou switch et observer comment le réseau réagit et continue à fonctionner avec des solutions de redondance.
+
+== Utilisation de serveurs DNS, DHCP, et HTTP
+
+Implémentez des services essentiels comme DHCP, DNS, et serveurs HTTP pour simuler des réseaux d’entreprise complets.
+Exercice : Configurer un serveur DHCP pour distribuer des adresses IP automatiquement et un serveur DNS pour la résolution de noms.
+
+En combinant ces différents éléments, vous pourrez créer et gérer des topologies avancées sur Cisco Packet Tracer, tout en simulant des environnements proches de ceux rencontrés dans les entreprises.
+
+
+
+
+
+
+
+Vous avez dit :
+est-ce que je peux avoir la marche à suivre pour chacun
+ChatGPT a dit :
+ChatGPT
+Voici une marche à suivre détaillée pour chaque aspect des topologies avancées que vous pouvez pratiquer sur Cisco Packet Tracer.
+
+1. VLANs et Trunks
+Étapes :
+
+Ouvrez Cisco Packet Tracer et ajoutez plusieurs switchs et ordinateurs à la topologie.
+Sur chaque switch, entrez en mode configuration globale avec configure terminal.
+Créez des VLANs avec la commande :
+Copier le code
+vlan 10
+name VLAN_10
+vlan 20
+name VLAN_20
+Assignez les interfaces des switchs aux VLANs avec :
+kotlin
+Copier le code
+interface fastEthernet 0/1
+switchport mode access
+switchport access vlan 10
+Configurez un trunk pour permettre la communication entre les VLANs :
+kotlin
+Copier le code
+interface fastEthernet 0/24
+switchport mode trunk
+switchport trunk encapsulation dot1q
+Reliez les switchs par des trunks et testez la communication entre les VLANs.
+2. Inter-VLAN Routing
+Étapes :
+
+Connectez un routeur à vos switchs.
+Sur le routeur, entrez en mode configuration globale et créez des sous-interfaces pour chaque VLAN :
+kotlin
+Copier le code
+interface gigabitEthernet 0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+interface gigabitEthernet 0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+Configurez un routage entre les VLANs en activant le routage IP sur le routeur.
+Testez la connectivité entre les VLANs en utilisant des pings entre des machines de différents VLANs.
+3. Configuration de STP (Spanning Tree Protocol)
+Étapes :
+
+Sur vos switchs, activez STP avec la commande suivante en mode configuration globale :
+Copier le code
+spanning-tree vlan 1
+Pour configurer un switch en tant que root pour un VLAN spécifique :
+sql
+Copier le code
+spanning-tree vlan 1 root primary
+Sur les autres switchs, ajustez les priorités avec :
+Copier le code
+spanning-tree vlan 1 priority 16384
+Simulez une redondance en ajoutant plusieurs chemins et vérifiez que STP bloque certains ports pour éviter les boucles.
+4. Routage Dynamique (OSPF, EIGRP, BGP)
+Étapes pour OSPF :
+
+Connectez plusieurs routeurs et entrez en mode configuration globale.
+Activez OSPF sur chaque routeur :
+Copier le code
+router ospf 1
+network 192.168.1.0 0.0.0.255 area 0
+Configurez les réseaux concernés par OSPF sur chaque routeur.
+Testez la convergence en modifiant des chemins de routage et observez la mise à jour des tables de routage.
+5. ACLs (Access Control Lists)
+Étapes :
+
+Sur le routeur, créez une ACL pour restreindre l'accès :
+arduino
+Copier le code
+access-list 10 deny 192.168.1.0 0.0.0.255
+access-list 10 permit any
+Appliquez l'ACL sur une interface :
+kotlin
+Copier le code
+interface fastEthernet 0/0
+ip access-group 10 in
+Testez la connectivité depuis une machine et observez le comportement de l'ACL.
+6. QoS (Quality of Service)
+Étapes :
+
+Identifiez le trafic à prioriser (ex. voix ou vidéo).
+Créez une politique QoS sur le routeur ou switch :
+python
+Copier le code
+class-map match-all VOICE-TRAFFIC
+match ip dscp ef
+policy-map PRIORITY-QUEUE
+class VOICE-TRAFFIC
+priority percent 50
+Appliquez cette politique sur une interface :
+kotlin
+Copier le code
+interface fastEthernet 0/0
+service-policy output PRIORITY-QUEUE
+Testez en générant du trafic prioritaire.
+7. WANs et VPNs
+Étapes :
+
+Connectez deux sites distants avec des routeurs et simulez une connexion WAN via un câble série.
+Configurez une adresse IP sur les interfaces série :
+kotlin
+Copier le code
+interface serial 0/0
+ip address 192.168.1.1 255.255.255.252
+clock rate 64000
+Configurez un tunnel VPN entre les deux routeurs avec IPSec :
+arduino
+Copier le code
+crypto isakmp policy 10
+crypto ipsec transform-set SET1 esp-aes esp-sha-hmac
+Testez la connectivité à travers le VPN.
+8. Redondance et Haute Disponibilité (HSRP, GLBP)
+Étapes pour HSRP :
+
+Sur deux routeurs, configurez HSRP :
+kotlin
+Copier le code
+interface gigabitEthernet 0/0
+standby 1 ip 192.168.1.254
+standby 1 priority 110
+standby 1 preempt
+Sur le second routeur :
+Copier le code
+standby 1 ip 192.168.1.254
+standby 1 priority 100
+Testez en simulant la panne d’un routeur.
+9. Failover et Recovery
+Étapes :
+
+Ajoutez plusieurs liens redondants entre vos équipements.
+Configurez STP ou HSRP pour permettre le basculement.
+Simulez une panne en désactivant un lien ou en éteignant un routeur, puis observez le comportement de failover.
+10. Serveurs DNS, DHCP, HTTP
+Étapes pour DHCP :
+
+Sur un serveur, configurez le service DHCP :
+arduino
+Copier le code
+ip dhcp pool NETWORK1
+network 192.168.1.0 255.255.255.0
+default-router 192.168.1.1
+dns-server 192.168.1.2
+Activez DHCP sur une interface :
+kotlin
+Copier le code
+interface fastEthernet 0/0
+ip address dhcp
+Testez en connectant des clients et observez l’obtention d’adresses IP automatiques.
+Ces étapes vous permettront de maîtriser chaque composante des topologies avancées sur Cisco Packet Tracer. N'hésitez pas à les adapter à vos besoins spécifiques en fonction des objectifs de votre topologie.
+
+
+
+
+
+

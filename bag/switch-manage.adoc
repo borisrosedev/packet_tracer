@@ -1,0 +1,64 @@
+
+= Switch Managé
+
+Ce type de switch, qui permet la configuration d'interfaces VLAN, la segmentation du réseau, et d'autres fonctionnalités de gestion avancée, est appelé un switch managé.
+
+
+== Caractéristiques d'un Switch Managé
+
+Un switch managé offre des options de configuration et de gestion avancées qui permettent d'adapter et de sécuriser un réseau en fonction des besoins spécifiques de l'infrastructure. 
+
+=== Configuration des VLANs : 
+
+Les switches managés permettent de créer et d’assigner des VLANs pour segmenter le réseau en sous-réseaux isolés, ce qui améliore la sécurité et la gestion du trafic.
+
+
+=== Adresse IP de gestion : 
+
+En configurant une adresse IP sur une interface VLAN, vous pouvez accéder au switch pour l'administrer via des protocoles comme SSH, Telnet ou via une interface web (s'il en possède une).
+
+=== ...
+
+Permet de prioriser certains types de trafic, comme la voix ou la vidéo, pour garantir la performance des applications sensibles à la latence.
+
+=== Sécurité avancée : 
+
+Les switches managés proposent des fonctionnalités de sécurité, telles que la sécurité des ports, le filtrage des adresses MAC, et le contrôle d’accès.
+
+
+=== Gestion de Spanning Tree Protocol (STP) : 
+
+Utilisé pour éviter les boucles réseau, STP est crucial dans les réseaux avec des connexions redondantes.
+
+
+=== Monitoring et Diagnostic : 
+
+Ils offrent des outils pour surveiller l’état du réseau, les statistiques de ports, la détection des erreurs, et l'utilisation de la bande passante.
+
+=== Accès distant : 
+
+Les switches managés permettent une administration à distance, ce qui est utile pour les grandes infrastructures ou les sites distants.
+
+
+=== Switch Non-Managé
+
+En comparaison, un switch non-managé ne permet pas de configuration avancée. 
+
+=== ...
+
+Il fonctionne de manière plug-and-play, en connectant les appareils au réseau sans segmentation VLAN ni contrôle sur le trafic. 
+
+=== ...
+
+C'est une solution simple, mais elle n'offre pas les options de contrôle et de sécurité nécessaires dans des environnements plus complexes.
+
+
+=== Exemple dans le contexte de Packet Tracer
+
+Dans Cisco Packet Tracer, les switches utilisés pour des configurations de VLANs et d'adresses IP de gestion sont des switches managés, car ils vous permettent d'accéder aux interfaces de configuration et de gérer des paramètres avancés du réseau.
+
+
+
+
+
+

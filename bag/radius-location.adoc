@@ -1,0 +1,102 @@
+= Le serveur RADIUS et son placement
+
+== Introduction
+
+Le serveur RADIUS est généralement placé dans un VLAN d'administration ou de gestion séparé pour des raisons de sécurité et de contrôle. 
+
+
+
+== 1. VLAN typique pour le serveur RADIUS
+
+=== VLAN de gestion (Management VLAN) :
+
+Souvent un VLAN dédié (par exemple, VLAN 10 ou VLAN 99) utilisé pour les équipements critiques comme les serveurs RADIUS, les contrôleurs réseau, et les switches.
+
+=== ...
+
+Le VLAN de gestion est isolé du trafic utilisateur pour réduire les risques de compromission.
+
+== 2. Raisons de placer RADIUS dans un VLAN séparé
+
+=== Sécurité accrue :
+
+* Isoler le serveur RADIUS des VLANs utilisateurs empêche les accès directs depuis les appareils utilisateurs.
+
+=== ...
+
+* Vous pouvez restreindre l'accès au VLAN RADIUS en configurant des listes de contrôle d'accès (ACL) ou des pare-feu.
+
+=== Contrôle réseau :
+
+Placer RADIUS dans un VLAN de gestion permet d'avoir une meilleure supervision et d'éviter les interférences avec le trafic des utilisateurs.
+
+=== Qualité de service (QoS) :
+
+En ayant un VLAN dédié, vous pouvez prioriser les requêtes RADIUS pour garantir une latence minimale pendant les authentifications.
+
+== 3. Configuration recommandée
+
+=== Exemple : 
+
+VLAN 99 pour la gestion
+
+=== Configurer le VLAN de gestion :
+
+[source, bash]
+----
+vlan 99
+name Management
+----
+
+=== Attribuer une adresse IP au serveur dans ce VLAN : 
+
+Si votre serveur RADIUS (par ex., Cisco ISE) est connecté à une interface du switch :
+
+[source, bash]
+----
+interface g0/1
+switchport mode access
+switchport access vlan 99
+----
+
+=== Configurer une interface VLAN pour le switch (SVI) : 
+
+Cette interface permet au switch de communiquer avec le serveur RADIUS.
+
+[source, bash]
+----
+interface vlan 99
+ip address 192.168.99.1 255.255.255.0
+----
+
+Assurez-vous que le serveur RADIUS est sur la même plage IP (par exemple, 192.168.99.100).
+
+=== ...
+
+Configurer des ACLs pour limiter l'accès : Bloquez tout trafic non autorisé vers le serveur RADIUS en créant une ACL :
+
+[source, bash]
+----
+access-list 100 permit ip 192.168.99.0 0.0.0.255 any
+access-list 100 deny ip any any
+----
+
+4. Alternatives : Scénarios spécifiques
+
+
+=== Si vous avez plusieurs sites :
+
+Placez les serveurs RADIUS dans un VLAN d'administration central, accessible via des tunnels ou un routage inter-VLAN.
+
+=== Si le réseau est petit :
+
+Vous pouvez placer le serveur RADIUS dans le même VLAN que d'autres serveurs critiques, mais avec des ACL restrictives.
+
+== 5. Bonne pratique
+
+Utilisez des VRF (Virtual Routing and Forwarding) si votre infrastructure le permet, pour isoler complètement le trafic de gestion du trafic utilisateur.
+
+=== ...
+
+Assurez-vous que le VLAN utilisé pour le serveur RADIUS est sauvegardé par des liens redondants.
+

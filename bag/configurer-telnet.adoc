@@ -1,0 +1,76 @@
+= Programme avec Packet Tracer
+
+Dans Cisco Packet Tracer, l'onglet "Programming" est effectivement disponible sur les PC et les objets IoT, mais il n'est pas directement présent sur les routeurs ou switchs. 
+
+=== ...
+
+Pour configurer un routeur depuis un PC, on simule une session en ligne de commande (CLI) en utilisant un script d'automatisation sur le PC pour envoyer des commandes au routeur, comme si l'on utilisait un programme de type Telnet ou SSH.
+
+
+=== ...
+
+
+== Étapes pour configurer un routeur depuis un PC via Telnet ou SSH
+
+
+Activer Telnet ou SSH sur le Routeur
+Pour permettre la configuration distante, vous devez d'abord activer Telnet ou SSH sur le routeur. 
+
+
+== Vous pouvez le faire directement en accédant à l'interface CLI du routeur.
+
+Par exemple, accédez à l'interface CLI du routeur et entrez les commandes suivantes :
+
+plaintext
+Copier le code
+Router> enable
+Router# configure terminal
+Router(config)# hostname Router1
+Router(config)# ip domain-name example.com
+Router(config)# username admin privilege 15 password cisco
+Router(config)# enable secret cisco
+Router(config)# line vty 0 4
+Router(config-line)# login local
+Router(config-line)# transport input telnet ssh
+Router(config-line)# exit
+Router(config)# crypto key generate rsa
+Ce bloc de commandes configure un accès Telnet et SSH au routeur avec un utilisateur nommé admin et un mot de passe cisco.
+
+Connecter le PC au Routeur Assurez-vous que le PC et le routeur sont connectés dans la même topologie. Ils doivent être sur le même réseau ou disposer d'une route permettant de se joindre.
+
+Script JavaScript pour Envoyer des Commandes depuis le PC Dans Packet Tracer, ouvrez le PC, allez dans l'onglet Programming et sélectionnez JavaScript comme langage de programmation.
+
+Vous pouvez ensuite écrire un script qui utilise Telnet pour se connecter au routeur et envoyer des commandes. Voici un exemple de script pour configurer une interface sur le routeur :
+
+javascript
+Copier le code
+// Connexion Telnet au routeur
+var telnet = new Telnet();
+telnet.open("192.168.1.1", 23); // Remplacez par l'adresse IP du routeur
+
+// Connexion avec l'utilisateur et le mot de passe
+telnet.send("admin\n");
+telnet.send("cisco\n");
+
+// Entrer en mode enable
+telnet.send("enable\n");
+telnet.send("cisco\n"); // mot de passe enable
+
+// Configuration d'une interface
+telnet.send("configure terminal\n");
+telnet.send("interface GigabitEthernet0/0\n");
+telnet.send("ip address 192.168.1.1 255.255.255.0\n");
+telnet.send("no shutdown\n");
+telnet.send("exit\n");
+
+// Terminer la session
+telnet.send("exit\n");
+telnet.close();
+Ce script se connecte au routeur via Telnet, entre en mode enable, puis passe en mode configuration terminal pour configurer une adresse IP sur l'interface GigabitEthernet0/0.
+
+Exécuter le Script Après avoir écrit le script, exécutez-le. Le PC va utiliser Telnet pour se connecter au routeur et envoyer les commandes.
+
+Limitations
+Cisco Packet Tracer simule un environnement limité, et il n'est pas toujours possible de simuler des scripts réseau avancés avec JavaScript. Cependant, cette approche vous permet de faire des démonstrations de base pour automatiser certaines configurations sur un routeur à partir d'un PC.
+
+Cela vous permet de simuler une configuration réseau plus réaliste, comme l'utilisation de scripts pour automatiser les tâches de configuration sur des appareils réseau distants.

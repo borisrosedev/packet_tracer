@@ -1,0 +1,74 @@
+Si vous avez des sous-interfaces sur une interface physique, vous devez configurer les politiques (comme une service-policy) directement sur chaque sous-interface si le matériel ou le système d'exploitation réseau le permet. Cependant, sur de nombreux équipements, les politiques de QoS (Qualité de Service) sont souvent appliquées uniquement sur l'interface physique, et non sur les sous-interfaces.
+
+1. Configurer une Policy sur une sous-interface
+Si votre équipement permet l'application des politiques sur les sous-interfaces, voici un exemple :
+
+Exemple de configuration :
+Définissez la politique de QoS (si ce n’est pas déjà fait) :
+
+bash
+Copier le code
+policy-map PRIORITY-QUEUE
+class VOICE
+  priority 1000
+class class-default
+  fair-queue
+Appliquez la politique sur une sous-interface spécifique :
+
+bash
+Copier le code
+interface gigabitEthernet 0/1.10
+encapsulation dot1q 10
+service-policy output PRIORITY-QUEUE
+encapsulation dot1q 10 : Spécifie le VLAN associé à cette sous-interface.
+service-policy output PRIORITY-QUEUE : Applique la politique définie pour le trafic sortant.
+2. Scénario où la QoS ne peut pas être appliquée sur des sous-interfaces
+Certains équipements (notamment Cisco IOS) n’autorisent pas l'application directe de politiques QoS sur des sous-interfaces. Dans ce cas :
+
+Configurez la policy-map sur l’interface physique principale.
+Tout le trafic des sous-interfaces hérite de la politique appliquée sur l'interface physique.
+Exemple :
+Appliquez la politique sur l'interface principale :
+
+bash
+Copier le code
+interface gigabitEthernet 0/1
+service-policy output PRIORITY-QUEUE
+Configurez les sous-interfaces normalement pour leurs VLANs respectifs :
+
+bash
+Copier le code
+interface gigabitEthernet 0/1.10
+encapsulation dot1q 10
+ip address 192.168.10.1 255.255.255.0
+
+interface gigabitEthernet 0/1.20
+encapsulation dot1q 20
+ip address 192.168.20.1 255.255.255.0
+3. Autres considérations
+Segmentation : Si vos sous-interfaces transportent différents types de trafic (par exemple, voix, vidéo, données), configurez les classes QoS dans la policy-map pour reconnaître ces types de trafic, même si tout est appliqué à l’interface physique.
+
+bash
+Copier le code
+class-map match-all VOICE
+  match ip dscp ef
+Priorisation : Pour un trafic prioritaire (comme la voix), vous pouvez utiliser une classe de priorité (par exemple, priority dans la policy-map).
+
+4. Commandes de vérification
+Vérifiez l’état de la QoS appliquée :
+
+bash
+Copier le code
+show policy-map interface gigabitEthernet 0/1
+Vérifiez la configuration des sous-interfaces :
+
+bash
+Copier le code
+show running-config interface gigabitEthernet 0/1.10
+En conclusion, si votre matériel prend en charge QoS sur les sous-interfaces, configurez directement les politiques sur chaque sous-interface. Sinon, appliquez-les au niveau de l’interface physique en définissant des classes pour différencier les trafics des sous-interfaces.
+
+
+
+
+
+

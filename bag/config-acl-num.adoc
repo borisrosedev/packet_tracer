@@ -1,0 +1,244 @@
+= Les Access Control Lists (ACLs)
+
+
+== Introduction
+
+Les Access Control Lists (ACLs) permettent de filtrer le trafic réseau en fonction de diverses conditions comme l'adresse IP source ou destination, le protocole utilisé, etc. 
+
+=== ...
+
+En configurant des ACLs sur un routeur ou un switch, vous pouvez autoriser ou bloquer l'accès à certains segments de votre réseau tout en permettant l'accès à d'autres.
+
+
+=== ...
+
+Procédure détaillée pour configurer des ACLs afin de bloquer l'accès à certains segments tout en permettant l'accès à d'autres dans Cisco Packet Tracer.
+
+
+== Scénario Exemple
+
+Vous disposez de trois sous-réseaux :
+
+192.168.10.0/24 (VLAN 10)
+192.168.20.0/24 (VLAN 20)
+192.168.30.0/24 (VLAN 30)
+
+Vous voulez configurer une ACL pour :
+
+Bloquer l'accès au sous-réseau 192.168.30.0/24 depuis le sous-réseau 192.168.10.0/24.
+
+Autoriser le sous-réseau 192.168.10.0/24 à accéder au sous-réseau 192.168.20.0/24.
+
+
+== Création de la Topologie
+
+Ajoutez des routeurs et switches connectés à différents sous-réseaux dans Cisco Packet Tracer.
+
+=== ...
+
+Configurez les VLANs et les sous-réseaux comme dans un scénario inter-VLAN classique.
+
+=== ...
+
+
+Configurez le routage inter-VLAN avec un routeur (Router-on-a-stick) ou un switch multilayer.
+
+=== ...
+
+
+== Configurer les Adresses IP sur les Routeurs/Switchs
+
+Voici un exemple de configuration d'adresses IP sur un routeur pour les sous-interfaces correspondant aux différents VLANs :
+
+Configuration sur le routeur
+[source, bash]
+----
+enable
+configure terminal
+
+
+# Interface pour VLAN 10
+interface gigabitEthernet 0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+
+# Interface pour VLAN 20
+interface gigabitEthernet 0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+
+# Interface pour VLAN 30
+interface gigabitEthernet 0/0.30
+encapsulation dot1Q 30
+ip address 192.168.30.1 255.255.255.0
+no shutdown
+
+exit
+----
+
+
+
+== Configurer une ACL pour Bloquer l'Accès
+
+Étapes pour configurer l'ACL
+
+
+=== Créer l'ACL Numérotée Standard :
+
+Nous allons d'abord bloquer le trafic provenant du sous-réseau 192.168.10.0/24 vers 192.168.30.0/24.
+
+=== ...
+
+[source, bash]
+----
+access-list 10 deny 192.168.10.0 0.0.0.255
+access-list 10 permit any
+----
+
+
+
+=== Appliquer l'ACL sur l'Interface Concernée :
+
+L'ACL doit être appliquée sur l'interface du routeur qui reçoit le trafic du sous-réseau 192.168.10.0/24.
+
+
+[source, bash]
+----
+interface gigabitEthernet 0/0.10
+ip access-group 10 in
+----
+
+
+=== Explication de la Configuration :
+
+La commande access-list 10 deny 192.168.10.0 0.0.0.
+
+=== ...
+
+255 bloque tout le trafic venant de 192.168.10.0/24.
+
+=== ...
+
+La commande access-list 10 permit any permet tout autre trafic non explicitement bloqué.
+
+=== ...
+
+En appliquant l'ACL à l'interface gigabitEthernet 0/0.10, vous bloquez tout le trafic entrant de ce sous-réseau sur l'interface, empêchant l'accès à 192.168.30.0/24.
+
+=== Tester la Configuration :
+
+Envoyez des pings à partir d'un hôte dans le sous-réseau 192.168.10.0/24 vers une machine dans 192.168.30.0/24. Cela devrait échouer.
+
+=== ...
+
+Envoyez des pings à partir d'un hôte dans 192.168.10.0/24 vers 192.168.20.0/24. Cela devrait réussir, car l'ACL autorise ce trafic.
+
+== Configurer une ACL pour Autoriser le Trafic Entre Deux Sous-Réseaux
+
+
+Créer une ACL Numérotée pour autoriser spécifiquement le trafic entre 192.168.10.0/24 et 192.168.20.0/24.
+
+[source, bash]
+----
+access-list 20 permit 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255
+access-list 20 deny any
+----
+Appliquer cette ACL à l'Interface Concernée :
+
+Appliquez cette ACL sur l'interface gigabitEthernet 0/0.10 de la manière suivante :
+[source, bash]
+----
+interface gigabitEthernet 0/0.10
+ip access-group 20 in
+----
+
+
+=== Tester la Configuration :
+
+Testez la connectivité avec un ping entre un hôte dans 192.168.10.0/24 et un autre dans 192.168.20.0/24. Le ping devrait réussir.
+
+=== ...
+
+Tentez un ping vers 192.168.30.0/24, cela devrait échouer à cause de l’ACL précédente.
+
+== 6. Vérifier la Configuration
+
+Vous pouvez vérifier vos ACLs et leur application avec les commandes suivantes :
+
+
+=== Vérifier la configuration de l'ACL :
+
+[source, bash]
+----
+show access-lists
+----
+
+=== Vérifier l'application de l'ACL sur une interface :
+
+[source, bash]
+----
+show ip interface gigabitEthernet 0/0.10
+----
+
+
+=== Voir les statistiques d'accès bloqué ou permis par l'ACL :
+
+[source, bash]
+----
+show access-lists 10
+----
+
+
+== 7. Résumé des Commandes Importantes
+
+=== Créer une ACL Standard pour bloquer l'accès :
+
+[source, bash]
+----
+access-list 10 deny 192.168.10.0 0.0.0.255
+access-list 10 permit any
+----
+
+
+Appliquer l'ACL à une interface :
+
+[source, bash]
+----
+interface gigabitEthernet 0/0.10
+ip access-group 10 in
+----
+
+
+Créer une ACL Numérotée pour autoriser spécifiquement le trafic :
+
+[source, bash]
+----
+access-list 20 permit 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255
+access-list 20 deny any
+----
+
+
+== 8. Conseils
+
+=== Les ACLs sont appliquées séquentiellement : 
+
+Dès qu'une condition est remplie, les autres ne sont pas évaluées. Ainsi, si une condition est de "tout bloquer", tout le reste sera ignoré.
+
+=== L'ordre des ACLs est important : 
+
+Si vous appliquez d'abord un permit any, toutes les autres règles seront ignorées.
+
+=== ACLs standard vs étendues : 
+
+Les ACLs standard ne filtrent que sur l'IP source, alors que les ACLs étendues peuvent filtrer sur l'IP source et destination, ainsi que le protocole.
+Cette configuration d’ACL permet de contrôler efficacement l'accès entre différents sous-réseaux tout en protégeant les segments sensibles du réseau.
+
+
+
+
+
+
+
+

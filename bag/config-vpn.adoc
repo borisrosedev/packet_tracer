@@ -1,0 +1,204 @@
+Pour configurer une topologie avec deux sites distants reliés par un lien WAN et établir un VPN entre eux, nous allons utiliser Cisco Packet Tracer. Cette configuration permettra de simuler deux réseaux locaux (LAN) situés à des endroits différents et connectés via un lien WAN, en sécurisant la communication entre eux avec un VPN IPsec.
+
+1. Scénario Exemple
+Site 1 :
+Réseau local : 192.168.1.0/24
+Routeur R1
+Site 2 :
+Réseau local : 192.168.2.0/24
+Routeur R2
+Les deux routeurs seront connectés via une interface série simulant le lien WAN.
+Le VPN IPsec sera configuré pour sécuriser le trafic entre les deux sites.
+2. Création de la Topologie Réseau dans Cisco Packet Tracer
+Ajoutez deux routeurs (R1 et R2) dans Cisco Packet Tracer.
+Ajoutez deux switches, un pour chaque site, et connectez-les aux routeurs respectifs.
+Ajoutez deux PCs, un sur chaque réseau local.
+Connectez les routeurs entre eux via un lien série pour simuler la connexion WAN.
+Étape de Connexion :
+PC1 (Site 1) connecté au Switch1 (Réseau 192.168.1.0/24).
+PC2 (Site 2) connecté au Switch2 (Réseau 192.168.2.0/24).
+Switch1 connecté à Router1 (R1).
+Switch2 connecté à Router2 (R2).
+Routeur1 (R1) et Routeur2 (R2) connectés via un lien série.
+3. Configuration des Adresses IP et des Interfaces
+Sur R1 (Site 1)
+bash
+Copier le code
+enable
+configure terminal
+
+# Configuration de l'interface LAN (GigabitEthernet 0/0)
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+
+# Configuration de l'interface WAN (Serial 0/0/0)
+interface serial 0/0/0
+ip address 10.1.1.1 255.255.255.252
+clock rate 64000
+no shutdown
+exit
+
+# Activation du routage
+ip route 192.168.2.0 255.255.255.0 10.1.1.2
+Sur R2 (Site 2)
+bash
+Copier le code
+enable
+configure terminal
+
+# Configuration de l'interface LAN (GigabitEthernet 0/0)
+interface gigabitEthernet 0/0
+ip address 192.168.2.1 255.255.255.0
+no shutdown
+exit
+
+# Configuration de l'interface WAN (Serial 0/0/0)
+interface serial 0/0/0
+ip address 10.1.1.2 255.255.255.252
+no shutdown
+exit
+
+# Activation du routage
+ip route 192.168.1.0 255.255.255.0 10.1.1.1
+4. Configuration du VPN IPsec entre les Sites
+Sur R1 (Site 1)
+bash
+Copier le code
+enable
+configure terminal
+
+# Créer une clé partagée pour l'authentification du VPN
+crypto isakmp policy 10
+encryption aes
+hash sha
+authentication pre-share
+group 2
+exit
+
+crypto isakmp key mysecretkey address 10.1.1.2
+
+# Créer une ACL pour identifier le trafic à chiffrer
+access-list 110 permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255
+
+# Créer une politique de sécurité pour le VPN
+crypto ipsec transform-set MYSET esp-aes esp-sha-hmac
+exit
+
+# Créer un map pour appliquer la politique IPsec
+crypto map VPNMAP 10 ipsec-isakmp
+set peer 10.1.1.2
+set transform-set MYSET
+match address 110
+exit
+
+# Appliquer le crypto map à l'interface WAN
+interface serial 0/0/0
+crypto map VPNMAP
+exit
+Sur R2 (Site 2)
+bash
+Copier le code
+enable
+configure terminal
+
+# Créer une clé partagée pour l'authentification du VPN
+crypto isakmp policy 10
+encryption aes
+hash sha
+authentication pre-share
+group 2
+exit
+
+crypto isakmp key mysecretkey address 10.1.1.1
+
+# Créer une ACL pour identifier le trafic à chiffrer
+access-list 110 permit ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+
+# Créer une politique de sécurité pour le VPN
+crypto ipsec transform-set MYSET esp-aes esp-sha-hmac
+exit
+
+# Créer un map pour appliquer la politique IPsec
+crypto map VPNMAP 10 ipsec-isakmp
+set peer 10.1.1.1
+set transform-set MYSET
+match address 110
+exit
+
+# Appliquer le crypto map à l'interface WAN
+interface serial 0/0/0
+crypto map VPNMAP
+exit
+5. Vérification et Test de la Connexion VPN
+Test de Connectivité
+Depuis PC1 (192.168.1.2), essayez de pinguer PC2 (192.168.2.2) :
+
+bash
+Copier le code
+ping 192.168.2.2
+Le VPN devrait maintenant chiffrer le trafic entre les deux sites, et le ping devrait réussir.
+
+Vérifier l'Établissement du Tunnel VPN
+Sur R1 et R2, vous pouvez vérifier l'état du VPN avec la commande suivante :
+
+bash
+Copier le code
+show crypto isakmp sa
+Cela montre si la Security Association (SA) est établie.
+
+Ensuite, vérifiez les tunnels IPsec avec :
+
+bash
+Copier le code
+show crypto ipsec sa
+Cela vous donnera des informations sur le nombre de paquets qui sont chiffrés et déchiffrés.
+
+6. Résumé des Commandes Importantes
+Configuration des Routeurs (WAN et LAN) :
+Interface WAN sur R1 :
+bash
+Copier le code
+interface serial 0/0/0
+ip address 10.1.1.1 255.255.255.252
+Interface WAN sur R2 :
+bash
+Copier le code
+interface serial 0/0/0
+ip address 10.1.1.2 255.255.255.252
+Configuration du VPN IPsec :
+Sur R1 :
+bash
+Copier le code
+crypto isakmp policy 10
+encryption aes
+hash sha
+authentication pre-share
+Appliquer la politique de sécurité sur l'interface WAN :
+bash
+Copier le code
+interface serial 0/0/0
+crypto map VPNMAP
+Vérification du VPN :
+Vérification de l'ISAKMP SA :
+bash
+Copier le code
+show crypto isakmp sa
+Vérification du Tunnel IPsec :
+bash
+Copier le code
+show crypto ipsec sa
+7. Conclusion
+En suivant ces étapes, vous aurez configuré une topologie avec deux sites distants reliés par un lien WAN et sécurisé avec un VPN IPsec. Ce VPN permet de chiffrer le trafic entre les deux sites pour assurer la confidentialité et l'intégrité des données qui transitent entre eux.
+
+
+
+
+
+
+
+
+
+
+

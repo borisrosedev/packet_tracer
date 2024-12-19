@@ -1,0 +1,237 @@
+= Commandes de configuration de base et avancée d'un switch Cisco
+
+
+
+
+== 1. Mode d'accès à l'interface
+
+Pour accéder aux modes de configuration du switch et de ses interfaces :
+
+[source, bash]
+----
+enable                # Active le mode privilégié
+configure terminal    # Passe en mode de configuration globale
+----
+
+
+== 2. Configurer le nom du switch
+[source, bash]
+----
+Switch(config)# hostname MonSwitch
+----
+
+
+== 3. Configurer une interface VLAN (adresse IP pour le switch)
+[source, bash]
+----
+Switch(config)# interface vlan 1
+Switch(config-if)# ip address 192.168.1.10 255.255.255.0
+Switch(config-if)# no shutdown
+----
+
+
+== 4. Configurer une passerelle par défaut
+
+[source, bash]
+----
+Switch(config)# ip default-gateway 192.168.1.1
+----
+
+
+== 5. Configurer un mot de passe d'accès pour les modes enable et console
+
+[source, bash]
+----
+Switch(config)# enable password monmotdepasse
+Switch(config)# line console 0
+Switch(config-line)# password monmotdepasseconsole
+Switch(config-line)# login
+Switch(config-line)# exit
+----
+
+
+== 6. Configurer le mot de passe de telnet/SSH (accès distant)
+
+[source, bash]
+----
+Switch(config)# line vty 0 4
+Switch(config-line)# password monmotdepassevty
+Switch(config-line)# login
+Switch(config-line)# exit
+----
+
+
+== 7. Configurer SSH (accès sécurisé)
+[source, bash]
+----
+Switch(config)# hostname MonSwitch
+Switch(config)# ip domain-name exemple.com
+Switch(config)# crypto key generate rsa
+# Répondez à la demande de taille de clé (par exemple, 1024 ou 2048 bits)
+Switch(config)# line vty 0 4
+Switch(config-line)# transport input ssh
+Switch(config-line)# login local
+Switch(config-line)# exit
+----
+
+
+== 8. Configurer un nom d'utilisateur pour l'accès SSH
+[source, bash]
+----
+Switch(config)# username admin privilege 15 secret monmotdepasse
+----
+
+
+== 9. Configurer un VLAN
+[source, bash]
+----
+Switch(config)# vlan 10
+Switch(config-vlan)# name VLAN_Marketing
+Switch(config-vlan)# exit
+----
+
+
+== 10. Attribuer un VLAN à une interface
+[source, bash]
+----
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# exit
+----
+
+== 11. Configurer une interface en mode trunk
+[source, bash]
+----
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport trunk allowed vlan 10,20,30
+Switch(config-if)# exit
+----
+
+
+== 12. Configurer l'agrégation de liens (EtherChannel)
+[source, bash]
+----
+Switch(config)# interface range fastethernet 0/1 - 2
+Switch(config-if-range)# channel-group 1 mode active
+Switch(config-if-range)# exit
+----
+
+
+== 13. Configurer Spanning Tree Protocol (STP)
+
+Pour définir le switch comme le pont racine pour un VLAN spécifique :
+
+[source, bash]
+----
+Switch(config)# spanning-tree vlan 10 root primary
+----
+
+
+== 14. Activer PortFast sur une interface (utile pour les postes de travail)
+
+[source, bash]
+----
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# spanning-tree portfast
+----
+
+
+== 15. Configurer les descriptions d'interface
+[source, bash]
+----
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# description Connexion_vers_PC_Marketing
+Switch(config-if)# exit
+----
+
+
+== 16. Configurer la qualité de service (QoS)
+
+Pour configurer des paramètres de QoS sur un switch :
+
+[source, bash]
+----
+Switch(config)# mls qos
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# mls qos trust dscp
+Switch(config-if)# exit
+----
+
+
+== 17. Configurer la sécurité des ports (Port Security)
+
+Pour empêcher l'accès aux périphériques non autorisés :
+
+[source, bash]
+----
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# switchport port-security
+Switch(config-if)# switchport port-security maximum 2
+Switch(config-if)# switchport port-security violation shutdown
+Switch(config-if)# switchport port-security mac-address sticky
+Switch(config-if)# exit
+----
+
+
+== 18. Configurer SNMP (Simple Network Management Protocol)
+
+Pour permettre la gestion et le suivi du switch :
+
+[source, bash]
+----
+Switch(config)# snmp-server community public RO
+Switch(config)# snmp-server community private RW
+----
+
+
+== 19. Configurer NTP (Network Time Protocol)
+
+[source, bash]
+----
+Switch(config)# ntp server 192.168.1.100
+----
+
+
+== 20. Sauvegarder la configuration
+Pour enregistrer la configuration en cours dans la mémoire :
+
+[source, bash]
+----
+Switch# copy running-config startup-config
+----
+
+
+== 21. Afficher les configurations et informations de diagnostic
+Afficher les VLANs configurés :
+
+[source, bash]
+----
+Switch# show vlan brief
+----
+
+
+=== Afficher les interfaces et leur état :
+
+[source, bash]
+----
+Switch# show ip interface brief
+----
+
+
+
+=== Afficher les informations sur STP :
+
+[source, bash]
+----
+Switch# show spanning-tree
+----
+
+
+=== Afficher la configuration de sécurité des ports :
+
+[source, bash]
+----
+Switch# show port-security interface fastethernet 0/1
+----

@@ -1,0 +1,70 @@
+
+
+
+== Modules disponibles dans le PT Cloud
+
+=== NM-1AM et 1CE : 
+
+Modules pour connexions analogiques et série.
+
+=== 1CFEN, 1CGE, 1CX : 
+
+Modules pour connexions fibre optique et Gigabit Ethernet (1CGE étant pour les connexions Gigabit).
+
+=== 1FFE et 1FGE : 
+
+Modules fibre (Fast Ethernet et Gigabit Ethernet).
+
+=== 1S : 
+
+Module série.
+
+== Solution pour une connexion Ethernet avec le PT Cloud
+
+
+Cisco Packet Tracer limite souvent les options de connectivité pour le PT Cloud.
+
+
+=== Utiliser un Routeur supplémentaire :
+
+Place un autre routeur dans l’espace de travail pour simuler une connexion Internet.
+
+=== ...
+
+Configure ce routeur avec une adresse IP publique (par exemple, 8.8.8.8) et relie-le à ton routeur principal via un câble Ethernet.
+
+=== ...
+
+Configure une route par défaut sur ton routeur principal pointant vers le routeur supplémentaire, pour simuler une sortie vers Internet.
+
+
+=== Utiliser un Modem ou un Routeur-Cloud :
+
+Certains modèles de modems et de routeurs dans Packet Tracer sont conçus pour établir une connexion Ethernet simulée avec Internet.
+
+=== ...
+
+Si le PT Cloud ne permet pas de configuration Ethernet, essaye d’ajouter un dispositif comme un modem câblé ou un routeur en lieu et place du PT Cloud et configure les adresses IP correspondantes pour la simulation.
+
+=== ...
+
+Configurer le PT Cloud pour une connexion série (si Ethernet n’est pas possible) :
+
+=== ...
+
+Si tu peux utiliser une connexion série pour le PT Cloud, configure la sous-interface du routeur en mode série.
+
+=== ...
+
+Ajoute une adresse IP compatible dans le PT Cloud pour permettre la communication.
+
+=== ...
+
+Essaye l’une de ces solutions alternatives, car Cisco Packet Tracer peut avoir des limitations dans la configuration Ethernet directe sur le PT Cloud. 
+
+=== ...
+
+En cas de besoin, le remplacement par un routeur ou un modem peut souvent fonctionner pour les simulations de connexion Internet.
+
+
+

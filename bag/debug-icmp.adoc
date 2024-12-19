@@ -1,0 +1,62 @@
+La commande debug ip icmp est utilisée pour surveiller et afficher les paquets ICMP (comme les requêtes et les réponses de ping) qui transitent par un routeur. Cela vous permet de vérifier si le routeur reçoit et traite les paquets ICMP, et si des réponses sont envoyées. Voici comment utiliser cette commande dans votre processus de dépannage.
+
+Étapes pour utiliser debug ip icmp :
+Exécuter la commande de débogage sur le routeur :
+
+Connectez-vous à votre routeur et entrez en mode privileged EXEC (avec la commande enable).
+Activez le débogage ICMP :
+bash
+Copier le code
+debug ip icmp
+Cela activera la surveillance des paquets ICMP sur le routeur et affichera des informations à chaque fois qu'un paquet ICMP passe par le routeur.
+
+Effectuer un test de ping :
+
+Pendant que la commande de débogage est activée, effectuez un ping depuis un PC du VLAN 20 vers un hôte du VLAN 10 ou la passerelle du VLAN 10 :
+bash
+Copier le code
+ping 192.168.10.x  # Adresse IP d'un hôte dans le VLAN 10
+Observer les résultats du débogage :
+
+Les résultats du débogage apparaîtront dans la console du routeur. Vous verrez des messages indiquant la réception et l'envoi des paquets ICMP.
+Si vous voyez des messages "ICMP echo request received" et "ICMP echo reply sent", cela signifie que les requêtes ICMP (ping) sont bien reçues et que les réponses sont envoyées.
+Voici un exemple de sortie que vous pourriez voir :
+
+bash
+Copier le code
+ICMP: echo request from 192.168.20.10 to 192.168.10.1
+ICMP: echo reply from 192.168.10.1 to 192.168.20.10
+Si vous ne voyez que les requêtes sans les réponses, cela peut indiquer que les réponses sont bloquées, par exemple par une ACL ou un pare-feu.
+
+Analyser les résultats :
+
+Si vous ne voyez pas les requêtes ICMP arriver, cela peut indiquer que le trafic ICMP est bloqué avant d'atteindre le routeur (par exemple, par un switch mal configuré ou une ACL).
+Si les requêtes arrivent mais que les réponses ne sont pas envoyées, cela pourrait indiquer un problème avec le routage ou une ACL bloquant les réponses ICMP.
+Arrêter le débogage :
+
+Une fois que vous avez recueilli suffisamment d'informations, vous pouvez désactiver le débogage pour éviter de surcharger le routeur avec des messages inutiles :
+bash
+Copier le code
+undebug all
+Cela arrêtera l'affichage des messages de débogage.
+
+Exemples d'utilisation :
+Vérifier les requêtes ICMP venant du VLAN 20 vers la passerelle du VLAN 10 :
+
+Lancez debug ip icmp sur le routeur.
+Depuis un hôte du VLAN 20, pingez la passerelle du VLAN 10 (par exemple, 192.168.10.1).
+Observez si le routeur reçoit la requête ICMP et envoie une réponse.
+Vérifier le routage ICMP entre deux VLANs :
+
+Si le routage inter-VLAN est en place, essayez de pinguer un hôte dans le VLAN 10 depuis un hôte dans le VLAN 20.
+Utilisez debug ip icmp pour voir si les paquets sont routés correctement et si les réponses ICMP reviennent.
+Conclusion :
+La commande debug ip icmp est un outil très utile pour diagnostiquer les problèmes de connectivité ICMP, comme les pings, entre les VLANs. Elle vous permet de voir exactement où les paquets ICMP sont bloqués ou s'il y a un problème de réponse.
+
+N'oubliez pas d'arrêter le débogage avec undebug all une fois que vous avez terminé. Si vous avez des résultats ou des messages que vous ne comprenez pas, n'hésitez pas à les partager, et je pourrai vous aider à les interpréter.
+
+
+
+
+
+

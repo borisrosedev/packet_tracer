@@ -1,0 +1,115 @@
+= Attribuer une adresse IP à un swtich
+
+== Introduction
+
+Sur Cisco Packet Tracer (et les switchs Cisco en général), il y a une différence entre :
+
+Créer une interface VLAN et lui attribuer une adresse IP :
+
+Cela signifie configurer le switch pour qu'il ait une adresse IP de gestion. 
+
+=== ...
+
+Cette adresse permet au switch d'être accessible pour des tâches d'administration, comme via Telnet, SSH, ou le protocole de gestion SNMP.
+
+
+=== Ajouter un VLAN à la table de VLANs :
+
+Cela signifie créer un VLAN et l'ajouter à la base de données des VLANs sur le switch. 
+
+=== ...
+
+Cela ne configure pas d'adresse IP pour le VLAN ; il s'agit simplement de définir une nouvelle partition de réseau logique. 
+
+=== ...
+
+Une fois le VLAN ajouté, vous pouvez assigner des ports physiques du switch à ce VLAN pour segmenter le réseau.
+
+
+== Différence en détail
+
+
+=== Interface VLAN avec une IP de gestion :
+
+
+=== Exemple : 
+
+interface vlan 1 avec ip address 192.168.1.10 255.255.255.0
+
+Permet d’accéder et d’administrer le switch.
+
+=== ...
+
+Cette IP est une adresse logique utilisée pour gérer le switch (en général, on utilise le VLAN 1 par défaut pour cela, mais on peut aussi configurer une IP sur d'autres interfaces VLAN si on souhaite gérer le switch depuis d'autres VLANs).
+
+=== Créer un VLAN dans la table des VLANs :
+
+
+=== Exemple : 
+
+vlan 10 avec un nom name VLAN_Marketing
+
+
+Crée un nouveau VLAN sans adresse IP associée. 
+
+=== ...
+
+Ce VLAN devient une entité logique dans le switch, permettant de regrouper des ports pour qu'ils ne puissent communiquer qu'entre eux ou via une passerelle (souvent configurée sur un routeur ou un switch de niveau 3).
+
+=== ...
+
+Cela permet une segmentation du réseau, sans nécessairement ajouter une adresse IP au switch pour ce VLAN.
+
+
+== Exemple dans Packet Tracer
+
+
+=== Créer le VLAN :
+
+[source, bash]
+----
+Switch(config)# vlan 10
+Switch(config-vlan)# name VLAN_Marketing
+----
+
+=== ...
+
+Ici, vous avez simplement créé le VLAN 10 dans la table de VLANs. 
+
+=== ...
+
+Ensuite, vous pouvez associer des ports à ce VLAN pour isoler le trafic.
+
+Ajouter une interface VLAN avec une IP de gestion :
+
+[source, bash]
+----
+Switch(config)# interface vlan 10
+Switch(config-if)# ip address 192.168.10.1 255.255.255.0
+Switch(config-if)# no shutdown
+----
+
+
+Cette configuration attribue une adresse IP au switch pour le VLAN 10. 
+
+=== ...
+
+Cela permet au switch de communiquer via cette IP sur le réseau du VLAN 10, ...
+
+=== ...
+
+mais cela n'est nécessaire que si vous souhaitez gérer le switch depuis ce VLAN ou permettre au switch d'avoir une passerelle IP pour ce VLAN.
+
+=== ...
+
+En résumé, créer un VLAN dans la table de VLANs est une opération de segmentation du réseau, ...
+
+=== ...
+
+tandis que configurer une interface VLAN avec une adresse IP permet d’administrer ou de donner une adresse de gestion au switch.
+
+
+
+
+
+

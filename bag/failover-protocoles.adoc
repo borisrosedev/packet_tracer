@@ -1,0 +1,155 @@
+= Redondance et disponibilité du réseau
+
+
+== Introduction
+
+Pour assurer la redondance et la disponibilité dans un réseau, il existe plusieurs solutions, ...
+
+=== ...
+
+chacune adaptée à des besoins spécifiques de tolérance aux pannes et de distribution de charge. 
+
+
+== 1. HSRP (Hot Standby Router Protocol)
+
+=== Fonctionnement : 
+
+HSRP est un protocole Cisco qui permet de créer une redondance entre plusieurs routeurs en configurant un "routeur virtuel" partagé. 
+
+=== ...
+
+
+Un routeur est actif, et un autre est en veille (standby).
+
+=== Avantage : 
+
+Si le routeur actif tombe en panne, le routeur en veille prend le relais 
+immédiatement, assurant ainsi une continuité du service.
+
+=== Limitation : 
+
+HSRP ne balance pas la charge, il ne fait que basculer vers un routeur de secours en cas de panne.
+
+=== Utilisation : 
+
+Recommandé pour des environnements où la redondance du routeur est prioritaire mais où l'équilibrage de charge n'est pas critique.
+
+== 2. GLBP (Gateway Load Balancing Protocol)
+
+=== Fonctionnement : 
+
+GLBP est une alternative avancée à HSRP, qui permet non seulement la redondance mais aussi l'équilibrage de charge. 
+
+=== ...
+
+Avec GLBP, plusieurs routeurs partagent un même "gateway virtuel", et chacun peut être actif.
+
+=== Avantage : 
+
+GLBP permet de distribuer le trafic entre plusieurs routeurs actifs simultanément, ...
+
+=== ...
+
+offrant ainsi une meilleure utilisation des ressources réseau et une tolérance aux pannes.
+
+=== Limitation : 
+
+GLBP est propre à Cisco et peut être plus complexe à configurer que HSRP.
+
+=== Utilisation : 
+
+Idéal pour des réseaux où la redondance et l'équilibrage de charge sont tous deux nécessaires.
+
+== 3. STP (Spanning Tree Protocol)
+
+
+=== Fonctionnement : 
+
+STP est conçu pour les réseaux à base de switchs et non de routeurs. 
+
+=== ...
+
+Il évite les boucles en désactivant automatiquement les liens redondants dans un réseau de switchs. 
+
+=== ...
+
+STP s'assure qu'il y a toujours un chemin actif sans boucles, et réactive les liens en cas de panne d'un chemin principal.
+
+=== Avantage : 
+
+STP assure la résilience dans un réseau de switchs et permet d'éviter les boucles réseau, qui peuvent saturer le réseau et entraîner des pannes.
+
+=== Limitation : 
+
+STP peut introduire des délais lorsqu'il bascule vers un chemin alternatif, bien que des versions comme RSTP (Rapid STP) réduisent ce délai.
+
+=== Utilisation : 
+
+Recommandé pour les réseaux de switchs de niveau 2, là où la redondance de liens est nécessaire mais sans avoir besoin de boucles actives.
+
+== 4. VRRP (Virtual Router Redundancy Protocol)
+
+=== Fonctionnement : 
+
+VRRP est similaire à HSRP, mais c’est un protocole standardisé (IEEE). VRRP crée un routeur virtuel pour assurer la redondance entre plusieurs routeurs.
+
+=== Avantage : 
+
+Il permet une configuration multi-vendeurs pour les réseaux avec des équipements de différents constructeurs.
+
+=== Limitation : 
+
+VRRP est moins répandu dans les équipements Cisco, où HSRP reste généralement privilégié.
+
+=== Utilisation : 
+
+Adapté aux environnements multi-fournisseurs où la redondance de passerelles est requise.
+
+== 5. LACP (Link Aggregation Control Protocol)
+
+=== Fonctionnement : 
+
+LACP permet d'agréger plusieurs liens physiques entre deux appareils en une seule interface logique. 
+
+=== ...
+
+Cela offre à la fois redondance et équilibrage de charge.
+
+=== Avantage : 
+
+En cas de panne d'un lien physique, les autres liens assurent la continuité sans interruption de service. 
+
+=== ...
+
+De plus, LACP peut distribuer le trafic sur plusieurs liens pour améliorer les performances.
+
+=== Limitation : 
+
+Fonctionne au niveau de la couche de liaison de données et nécessite une compatibilité sur les deux appareils connectés.
+
+=== Utilisation : 
+
+Idéal pour la redondance de liens physiques entre switches, serveurs et autres équipements de réseau.
+
+== 6. MSTP (Multiple Spanning Tree Protocol)
+
+=== Fonctionnement : 
+
+MSTP est une extension de STP qui permet de regrouper plusieurs VLANs dans des instances de spanning tree distinctes. 
+
+=== ...
+
+Cela optimise la gestion des liens redondants en équilibrant la charge entre les liens.
+
+=== Avantage : 
+
+Il permet une meilleure utilisation des liens et réduit le nombre d’instances de spanning tree à gérer.
+
+=== Limitation : 
+
+Plus complexe à configurer que STP ou RSTP.
+
+=== Utilisation : 
+
+Recommandé pour des réseaux multi-VLANs qui nécessitent à la fois la redondance et l'équilibrage de charge.
+

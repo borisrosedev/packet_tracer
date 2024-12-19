@@ -1,0 +1,136 @@
+Pour configurer un réseau avec plusieurs VLANs et mettre en place le routage inter-VLAN sur un routeur (router-on-a-stick) ou un switch multilayer dans Cisco Packet Tracer, suivez les étapes ci-dessous.
+
+Option 1 : Routage inter-VLAN avec un routeur (Router-on-a-stick)
+Étapes pour configurer un Router-on-a-Stick :
+1. Créer la topologie réseau
+Ajoutez un switch, un routeur et plusieurs PCs (au moins un pour chaque VLAN).
+Connectez les PCs au switch via les interfaces FastEthernet.
+Connectez le routeur au switch avec un câble Ethernet (par exemple FastEthernet 0/0 sur le routeur).
+2. Configurer les VLANs sur le Switch
+Accédez au CLI du switch, entrez en mode configuration globale :
+bash
+Copier le code
+enable
+configure terminal
+Créez plusieurs VLANs (par exemple VLAN 10 et VLAN 20) :
+bash
+Copier le code
+vlan 10
+name VLAN10
+vlan 20
+name VLAN20
+Assignez les ports du switch à ces VLANs :
+bash
+Copier le code
+interface fastEthernet 0/1
+switchport mode access
+switchport access vlan 10
+exit
+interface fastEthernet 0/2
+switchport mode access
+switchport access vlan 20
+exit
+Configurez l'interface connectée au routeur comme trunk pour transporter le trafic de plusieurs VLANs :
+bash
+Copier le code
+interface fastEthernet 0/24
+switchport mode trunk
+exit
+3. Configurer le Routage Inter-VLAN sur le Routeur
+Accédez au CLI du routeur, entrez en mode configuration globale :
+bash
+Copier le code
+enable
+configure terminal
+Créez des sous-interfaces pour chaque VLAN :
+bash
+Copier le code
+interface gigabitEthernet 0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+exit
+interface gigabitEthernet 0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+exit
+Cette configuration permet au routeur de router le trafic entre les VLANs.
+4. Configurer les PCs avec des Adresses IP dans les Sous-Réseaux Respectifs
+Configurez les adresses IP des PCs dans les sous-réseaux correspondants (par exemple, 192.168.10.10 pour VLAN 10 et 192.168.20.10 pour VLAN 20).
+Assurez-vous que la passerelle par défaut est l'IP attribuée à la sous-interface du routeur pour chaque VLAN (par exemple, 192.168.10.1 pour VLAN 10).
+5. Tester la Connectivité
+Testez la connectivité avec la commande ping entre les PCs de différents VLANs pour vérifier que le routage inter-VLAN fonctionne.
+Option 2 : Routage inter-VLAN avec un Switch Multilayer (L3)
+Étapes pour configurer un Switch Multilayer :
+1. Créer la topologie réseau
+Ajoutez un switch multilayer (par exemple un switch Cisco 3560) et plusieurs PCs.
+Connectez les PCs au switch.
+2. Configurer les VLANs sur le Switch Multilayer
+Sur le switch multilayer, accédez à la configuration en CLI, entrez en mode configuration globale :
+bash
+Copier le code
+enable
+configure terminal
+Créez les VLANs 10 et 20 :
+bash
+Copier le code
+vlan 10
+name VLAN10
+vlan 20
+name VLAN20
+Assignez les interfaces du switch aux VLANs respectifs :
+bash
+Copier le code
+interface fastEthernet 0/1
+switchport mode access
+switchport access vlan 10
+exit
+interface fastEthernet 0/2
+switchport mode access
+switchport access vlan 20
+exit
+3. Activer le Routage Inter-VLAN sur le Switch Multilayer
+Sur un switch multilayer, activez le routage IP :
+bash
+Copier le code
+ip routing
+Configurez les interfaces virtuelles (SVI) pour chaque VLAN :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+exit
+interface vlan 20
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+exit
+Ces interfaces permettent au switch de router le trafic entre les VLANs directement.
+4. Configurer les PCs avec des Adresses IP dans les Sous-Réseaux Respectifs
+Configurez les adresses IP des PCs dans les sous-réseaux correspondants (par exemple, 192.168.10.10 pour VLAN 10 et 192.168.20.10 pour VLAN 20).
+Assurez-vous que la passerelle par défaut est l'IP attribuée à l'interface virtuelle du switch pour chaque VLAN (par exemple, 192.168.10.1 pour VLAN 10).
+5. Tester la Connectivité
+Testez la connectivité avec la commande ping entre les PCs de différents VLANs pour vérifier que le routage inter-VLAN fonctionne.
+Résumé des Commandes
+Pour un routeur :
+
+Configurer les sous-interfaces :
+bash
+Copier le code
+interface gigabitEthernet 0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+Pour un switch multilayer :
+
+Configurer les VLANs et interfaces SVI :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+Après avoir configuré ces étapes, votre réseau avec plusieurs VLANs et le routage inter-VLAN sera fonctionnel. Vous pouvez tester la communication entre les machines des VLANs différents pour vous assurer que tout fonctionne correctement.
+
+
+
+
+
+

@@ -1,0 +1,263 @@
+= Un serveur de remédiation
+
+== Introduction
+
+Un serveur de remédiation est un composant important dans une infrastructure réseau, souvent utilisé dans des environnements où la conformité des dispositifs connectés au réseau est critique. 
+
+
+
+== 1. Définition
+
+Un serveur de remédiation est conçu pour gérer et appliquer des correctifs ou des configurations nécessaires à des systèmes non conformes dans un réseau. 
+
+=== ...
+
+Son rôle est de restaurer ou de maintenir la conformité des dispositifs (ordinateurs, serveurs, appareils IoT, etc.) en fonction des politiques de sécurité ou d'exploitation définies.
+
+
+== 2. Utilisation principale
+
+=== Réseaux avec accès conditionnel : 
+
+Dans des architectures où seuls les appareils conformes aux politiques peuvent accéder aux ressources critiques, les dispositifs non conformes sont redirigés vers une zone de remédiation pour être mis à jour.
+
+=== NAC (Network Access Control) : 
+
+Associé à des solutions comme Cisco ISE ou Microsoft NPS, le serveur de remédiation fournit les ressources nécessaires (mises à jour, correctifs, antivirus, etc.) aux dispositifs bloqués.
+
+=== Patching et mises à jour : 
+
+Permet d’appliquer des mises à jour logicielles (système d’exploitation, antivirus, etc.) pour combler des vulnérabilités.
+
+=== Remise en conformité : 
+
+Fournit des correctifs pour rétablir des configurations standards ou supprimer des logiciels malveillants détectés.
+
+== 3. Fonctionnement
+
+=== Détection :
+
+Lorsqu'un appareil se connecte au réseau, il est vérifié par un système de contrôle d'accès.
+Si l'appareil est non conforme (ex. antivirus obsolète, système non à jour), il est isolé dans un VLAN ou une zone spécifique du réseau.
+
+=== Redirection :
+
+L'appareil non conforme est dirigé vers le serveur de remédiation via une règle de pare-feu, un ACL ou un VLAN spécifique.
+
+=== Actions de remédiation :
+
+* Téléchargement et installation de mises à jour ou correctifs.
+* Application de configurations requises.
+* Réinstallation ou activation d’un antivirus ou d’un logiciel de sécurité.
+
+=== Validation :
+
+* Une fois la remédiation terminée, l'appareil est de nouveau scanné pour vérifier sa conformité.
+* Si conforme, il est autorisé à accéder aux ressources critiques du réseau.
+
+== 4. Composants courants
+
+
+* Serveur WSUS (Windows Server Update Services) pour les mises à jour des systèmes Windows.
+* Serveurs d'antivirus (ex : Kaspersky, Symantec, Sophos).
+* Logiciels de gestion des correctifs (ex : Ivanti, ManageEngine Patch Manager Plus).
+* Solutions NAC comme Cisco ISE, Aruba ClearPass ou Microsoft Network Policy Server.
+
+== 5. Exemples de déploiement
+
+=== Entreprise :
+
+Une entreprise exige que tous les appareils clients aient un antivirus actif et à jour avant d'accéder aux ressources internes. 
+
+=== ...
+
+Un appareil non conforme est isolé et dirigé vers un serveur de remédiation pour correction.
+
+=== Universités :
+
+Les étudiants connectant leurs appareils au réseau du campus doivent d'abord passer par un serveur ...
+
+=== ...
+
+de remédiation pour s'assurer qu'ils n'introduisent pas de vulnérabilités ou de malwares dans le réseau.
+
+=== Cloud et hybrides :
+
+Des serveurs de remédiation sont intégrés aux solutions de gestion des accès dans des environnements hybrides (On-premise et Cloud).
+
+== 6. Avantages
+
+=== Renforcement de la sécurité réseau : 
+
+Assure que seuls les appareils conformes peuvent interagir avec les systèmes critiques.
+
+=== Automatisation : 
+
+Réduit le besoin d'intervention manuelle pour corriger les appareils non conformes.
+
+=== Conformité aux politiques : 
+
+Facilite la conformité avec les normes de sécurité et les réglementations (ex : RGPD, ISO 27001).
+
+
+
+
+
+== Dans Packet Tracer
+
+== Introduction
+
+Dans Cisco Packet Tracer, il est possible de simuler un serveur de remédiation en configurant un environnement où les appareils non conformes sont redirigés vers un serveur isolé pour effectuer des correctifs. 
+
+=== ...
+
+Bien que Packet Tracer ne dispose pas directement d’un module dédié aux serveurs de remédiation, vous pouvez configurer une topologie qui simule cette fonctionnalité.
+
+
+
+=== 1. Objectif de la simulation
+
+* Identifier les appareils non conformes lorsqu'ils se connectent au réseau.
+* Isoler ces appareils dans un VLAN spécifique.
+* Configurer un serveur pour appliquer les correctifs nécessaires.
+* Vérifier que les appareils sont redirigés correctement et peuvent être remis en conformité.
+
+=== 2. Étapes pour la configuration
+
+=== Étape 1 : Préparer la topologie
+
+=== Routeur : 
+
+Utilisé pour gérer l'interconnexion des VLANs et l'accès au serveur de remédiation.
+
+=== Switch L2 : 
+
+Configurez des VLANs pour isoler les appareils non conformes.
+
+=== Serveur : 
+
+Configurez un serveur simulant le serveur de remédiation (utilisez un "Generic Server").
+
+=== Clients : 
+
+Ajoutez des PC ou des appareils IoT pour simuler des utilisateurs.
+
+=== Étape 2 : 
+
+Configurer les VLANs
+
+=== VLAN des appareils conformes :
+
+=== VLAN 10 (par exemple) : 
+
+Pour les appareils qui sont conformes aux politiques de sécurité.
+
+=== VLAN des appareils non conformes :
+
+=== VLAN 20 : 
+
+Pour les appareils détectés comme non conformes.
+
+=== Configurez les interfaces des switches :
+
+[source, bash]
+----
+enable
+configure terminal
+vlan 10
+name Conformes
+vlan 20
+name NonConformes
+interface range FastEthernet 0/1-10
+switchport mode access
+switchport access vlan 10
+interface range FastEthernet 0/11-20
+switchport mode access
+switchport access vlan 20
+interface FastEthernet 0/24
+switchport mode trunk
+----
+
+
+=== Étape 3 : Configurer un serveur pour la remédiation
+
+* Sélectionnez un Generic Server.
+* Activez le service HTTP et configurez une page Web pour fournir les correctifs ou informations nécessaires.
+* Activez le service DHCP sur le serveur pour fournir une configuration réseau de base aux appareils non conformes.
+
+=== Exemple d’une page HTML simple pour afficher un message de remédiation :
+
+=== Sur le serveur, dans l'onglet Services → HTTP → HTML, ajoutez :
+[source, bash]
+----
+<html>
+<head><title>Remédiation</title></head>
+<body>
+<h1>Accès Restreint</h1>
+<p>Votre appareil n’est pas conforme. Veuillez installer les correctifs en cliquant sur le lien ci-dessous :</p>
+<a href="https://correctif.example.com">Télécharger les correctifs</a>
+</body>
+</html>
+----
+
+
+=== Étape 4 : Configurer le routage sur le routeur
+
+=== Ajoutez des sous-interfaces pour chaque VLAN :
+
+[source, bash]
+----
+interface FastEthernet 0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+interface FastEthernet 0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+----
+
+
+=== Étape 5 : Configurer l'isolement avec ACLs
+
+Créez une règle ACL pour interdire aux appareils non conformes d'accéder à d'autres ressources sauf au serveur de remédiation :
+
+bash
+Copier le code
+access-list 100 deny ip 192.168.20.0 0.0.0.255 any
+access-list 100 permit ip 192.168.20.0 0.0.0.255 host 192.168.20.254
+Appliquez l’ACL à l’interface VLAN 20 sur le routeur :
+
+[source, bash]
+----
+interface FastEthernet 0/0.20
+ip access-group 100 in
+----
+
+=== Étape 6 : Simuler un appareil non conforme
+
+=== Configurez un PC dans VLAN 20.
+
+* Testez la connexion Internet ou vers d’autres ressources réseau : l'accès devrait être bloqué.
+
+* Essayez de charger la page Web sur le serveur de remédiation via son IP (par exemple, http://192.168.20.254) : cela devrait fonctionner.
+
+== 3. Tests à effectuer
+
+=== Connexion d’un appareil conforme : 
+
+Vérifiez qu’il peut accéder aux ressources réseau et à Internet.
+Connexion d’un appareil non conforme : Vérifiez qu’il est redirigé uniquement vers le serveur de remédiation.
+
+=== Remédiation : 
+
+Simulez la correction en reconfigurant manuellement l’appareil pour le déplacer dans VLAN 10.
+
+== 4. Limitations dans Packet Tracer
+
+Packet Tracer ne permet pas d’exécuter des scripts ou des outils de remédiation réels. Il ne sert qu’à simuler le routage, l’isolement, et la logique de redirection.
+
+
+
+
+
+
+

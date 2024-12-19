@@ -1,0 +1,162 @@
+= serveur Cisco ISE
+
+== Introduction
+
+Voici un exemple de configuration pour intégrer un serveur Cisco ISE comme serveur RADIUS pour gérer les authentifications 802.1X sur un switch Cisco, avec un VLAN par défaut assigné pour les échecs.
+
+
+== 1. Configurer le serveur RADIUS sur le switch
+
+Le serveur Cisco ISE est configuré pour authentifier les clients via RADIUS.
+
+=== Étapes :
+Déclarez le serveur RADIUS :
+
+[source, bash]
+----
+configure terminal
+radius-server host 192.168.1.100 auth-port 1812 acct-port 1813 key YOUR_SECRET_KEY
+----
+
+=== ...
+
+* 192.168.1.100 : Adresse IP du serveur ISE.
+* YOUR_SECRET_KEY : Clé secrète partagée entre le switch et le serveur ISE.
+
+=== Configurez un groupe de serveurs RADIUS (optionnel, si vous avez plusieurs serveurs) :
+
+
+[source, bash]
+----
+aaa group server radius ISE_RADIUS
+server 192.168.1.100 auth-port 1812 acct-port 1813
+----
+
+
+* Remplacez ISE_RADIUS par le nom du groupe de votre choix.
+
+=== Configurez le switch pour utiliser le RADIUS pour l'authentification :
+
+
+[source, bash]
+----
+aaa new-model
+aaa authentication dot1x default group ISE_RADIUS
+aaa authorization network default group ISE_RADIUS
+----
+
+
+== 2. Activer 802.1X sur le switch
+
+Activez le protocole 802.1X sur le switch pour permettre l'authentification basée sur les ports.
+
+
+=== Étapes :
+
+=== Activez 802.1X globalement :
+
+
+[source, bash]
+----
+dot1x system-auth-control
+----
+
+
+=== Configurez les interfaces des ports d’accès :
+
+[source, bash]
+----
+interface range g0/1 - 24
+switchport mode access
+switchport access vlan 200
+authentication port-control auto
+dot1x pae authenticator
+----
+
+
+=== ...
+
+
+authentication port-control auto : Le port attend une authentification avant de transmettre du trafic.
+
+
+==== ...
+
+dot1x pae authenticator : Définit le switch comme authentificateur.
+
+== 3. Configurer un VLAN par défaut pour les échecs
+
+Si l’authentification échoue, placez les utilisateurs dans un VLAN spécifique, comme le VLAN 200.
+
+Étapes :
+Configurez le VLAN 200 sur le switch :
+
+
+[source, bash]
+----
+vlan 200
+name FAILED_AUTH
+----
+
+
+=== Configurez un VLAN de secours pour les ports en cas d'échec :
+
+[source, bash]
+----
+interface range g0/1 - 24
+authentication event fail action authorize vlan 200
+----
+
+=== authorize vlan 200 : 
+
+Les utilisateurs non authentifiés sont placés dans le VLAN 200.
+
+=== Configurez une action pour les échecs de session 802.1X :
+
+[source, bash]
+----
+authentication event no-response action authorize vlan 200
+----
+
+== 4. Configurer les paramètres d’attribution VLAN dynamique
+
+Si Cisco ISE attribue dynamiquement les VLANs basés sur les utilisateurs ou groupes, vérifiez que l'interface est configurée pour accepter les VLAN dynamiques.
+
+Sur les interfaces d'accès :
+[source, bash]
+----
+interface range g0/1 - 24
+switchport mode access
+switchport voice vlan 20
+authentication host-mode multi-auth
+----
+
+
+=== multi-auth : 
+
+Permet plusieurs authentifications sur le même port (utile pour la voix et les données).
+
+== 5. Vérifications et diagnostic
+
+=== Commandes utiles :
+
+=== Vérifiez l’état des ports 802.1X :
+
+[source, bash]
+----
+show dot1x all
+----
+
+=== Vérifiez les sessions actives et leur statut :
+
+[source, bash]
+----
+show authentication sessions
+----
+
+=== Vérifiez la connectivité avec le serveur RADIUS :
+[source, bash]
+----
+test aaa group radius ISE_RADIUS username testuser password testpassword
+----
+

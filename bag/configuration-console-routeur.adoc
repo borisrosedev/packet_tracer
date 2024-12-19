@@ -1,0 +1,134 @@
+= Câble console
+
+== Introduction
+
+il est possible de simuler l’utilisation d’un câble console pour accéder à l’interface d’un routeur à partir d’un PC. 
+
+=== ...
+
+Cela permet de se connecter directement au routeur en utilisant l'application Terminal du PC, qui simule un accès via un câble console. 
+
+
+== Étapes pour Accéder à l’Interface d’un Routeur avec un Câble Console
+
+Connecter le Câble Console
+
+Dans Cisco Packet Tracer, sélectionnez le câble console en cliquant sur l’icône des câbles (ressemble à un câble bleu en forme de console).
+
+=== ...
+
+
+Cliquez sur le PC et sélectionnez le port RS-232 pour connecter une extrémité du câble.
+
+=== ...
+
+Cliquez ensuite sur le routeur et sélectionnez le port Console pour l'autre extrémité.
+
+* Accéder au Terminal sur le PC
+
+=== ...
+
+* Ouvrez le PC en cliquant dessus, puis accédez à l’onglet Desktop (Bureau).
+
+
+=== ...
+
+
+* Sélectionnez Terminal pour ouvrir une session de terminal qui va simuler la connexion console au routeur.
+
+=== ...
+
+* Configuration de la Session Terminal
+
+Une fenêtre de configuration du terminal s’ouvrira, avec les paramètres par défaut pour une connexion console, généralement :
+
+=== ...
+
+[%step]
+* Bits par seconde : 9600
+* Data Bits : 8
+* Parity : None
+* Stop Bits : 1
+* Flow Control : None
+
+=== ...
+
+Ces paramètres sont corrects pour une connexion console. Cliquez sur OK pour établir la connexion.
+
+
+== Interagir avec le Routeur
+
+Une fois connecté, vous verrez l’invite de commande du routeur (par exemple, Router>).
+
+
+=== ...
+
+
+Vous pouvez maintenant entrer les commandes comme si vous étiez directement connecté au routeur via un câble console. Par exemple :
+
+[source, bash]
+----
+Router> enable
+Router# configure terminal
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# no shutdown
+Router(config-if)# exit
+Router(config)# exit
+Router# write memory
+----
+
+
+Cette série de commandes permet de configurer une adresse IP sur une interface et d’enregistrer la configuration.
+
+
+== Avantages de la Connexion Console
+
+
+=== Accès au routeur même sans configuration IP : 
+
+
+Contrairement aux connexions Telnet ou SSH, la connexion console permet d’accéder au routeur même si aucune adresse IP n’est configurée.
+
+=== Utilisation pour la configuration initiale : 
+
+La connexion console est idéale pour la configuration initiale des appareils réseau.
+
+=== Résolution de problèmes : 
+
+En cas de problèmes de connexion réseau ou de perte d’accès au routeur, la connexion console permet un accès direct pour le dépannage.
+
+
+== Exemple Pratique
+
+Imaginons que vous avez besoin de configurer un routeur qui n'a pas d'adresse IP initialement :
+
+Connectez-vous via le câble console comme indiqué.
+
+=== ...
+
+Entrez en mode Enable en tapant enable.
+
+=== ...
+
+Passez en mode de configuration globale avec configure terminal.
+
+=== ...
+
+Configurez une adresse IP sur l’interface principale pour permettre les connexions futures via Telnet ou SSH.
+
+=== ...
+
+Ceci est une manière très pratique de simuler les connexions console pour une configuration initiale de routeur dans Packet Tracer, ...
+
+
+=== ...
+
+comme vous le feriez dans un environnement réel.
+
+
+
+
+
+
+

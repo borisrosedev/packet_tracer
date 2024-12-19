@@ -1,0 +1,96 @@
+= Passerelle par défaut sur un switch 
+
+La configuration d'une passerelle par défaut sur un switch est également cruciale lorsque le switch doit communiquer avec des services réseau situés dans d'autres VLANs ou sous-réseaux. 
+
+== 1. Envoi de logs vers un serveur syslog
+
+Les switches peuvent générer des logs d’événements importants (connexions, erreurs, alertes de sécurité, etc.), qui sont souvent envoyés à un serveur syslog centralisé pour analyse et stockage.
+
+
+=== ...
+
+Si ce serveur syslog est situé dans un autre VLAN ou sous-réseau, le switch doit savoir comment lui transmettre ces logs. 
+
+=== ...
+
+La passerelle par défaut permet au switch d’acheminer ces logs en dehors de son VLAN de gestion (par exemple, le VLAN 10) vers le serveur syslog via le routeur.
+
+
+== 2. Supervision SNMP depuis un autre VLAN
+
+Les entreprises utilisent souvent SNMP (Simple Network Management Protocol) pour surveiller les équipements réseau comme les switches. 
+
+=== ...
+
+Le serveur SNMP recueille des données telles que l'état du switch, l'utilisation de la bande passante et les alertes.
+
+=== ...
+
+Si le serveur SNMP est dans un autre VLAN, le switch doit utiliser la passerelle par défaut pour envoyer les informations SNMP au serveur de supervision.
+
+
+== 3. Synchronisation de l'heure avec un serveur NTP
+
+La synchronisation de l’heure est essentielle pour assurer la cohérence des horodatages, surtout dans les logs. 
+
+=== ...
+
+Cela permet de diagnostiquer plus facilement les événements et de garantir que tous les équipements réseau utilisent le même temps.
+
+=== ...
+
+Si le serveur NTP (Network Time Protocol) est dans un VLAN différent, le switch a besoin de la passerelle par défaut pour interroger ce serveur NTP et ajuster son horloge.
+
+=== 4. Alertes de sécurité
+
+De nombreux switches peuvent envoyer des alertes de sécurité (comme les tentatives d'accès non autorisées) à des systèmes de gestion de la sécurité dans un réseau centralisé (souvent dans un VLAN séparé).
+
+=== ...
+
+La passerelle par défaut permet au switch de transmettre ces alertes au système de gestion de la sécurité, ce qui améliore la réactivité et la surveillance du réseau.
+
+
+
+== Exemple de configuration de logs et de supervision
+
+Si vous avez un serveur syslog dans le VLAN 20 avec l’adresse 192.168.20.100, et que le switch est dans le VLAN 10, ...
+
+=== ...
+
+la passerelle par défaut permettrait au switch d’envoyer des logs directement au serveur, même s’il n’est pas dans le même VLAN :
+
+Configuration de la passerelle par défaut :
+
+[source, bash]
+----
+Switch(config)# ip default-gateway 192.168.10.1
+----
+
+
+Cette passerelle envoie le trafic externe via le routeur.
+
+
+== Configurer le serveur syslog :
+
+[source, bash]
+----
+Switch(config)# logging host 192.168.20.100
+----
+
+
+=== Activer SNMP (si nécessaire) :
+
+[source, bash]
+----
+Switch(config)# snmp-server community public RO
+Switch(config)# snmp-server host 192.168.20.101
+----
+
+Avec cette configuration, le switch utilise la passerelle pour envoyer ses messages de log, données SNMP, et autres informations aux serveurs situés dans d'autres sous-réseaux.
+
+
+
+
+
+
+

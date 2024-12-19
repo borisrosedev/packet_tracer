@@ -1,0 +1,216 @@
+= Liste de commandes Cisco
+
+== Introduction
+
+une liste de commandes Cisco couramment utilisées pour la configuration réseau, incluant les commandes que nous avons déjà vues dans notre scénario de routage inter-VLAN et de configuration DHCP :
+
+
+== 1. Configuration des Interfaces et des Adresses IP
+
+[source, bash]
+----
+enable  # Activer le mode privilégié
+configure terminal  # Entrer en mode configuration globale
+
+# Configurer une interface avec une adresse IP
+interface GigabitEthernet0/0/0
+ ip address [adresse IP] [masque de sous-réseau]
+ no shutdown  # Activer l'interface
+exit
+----
+
+
+== 2. Configuration des Sous-interfaces pour les VLANs (Routage Inter-VLAN)
+
+[source, bash]
+----
+# Configurer une sous-interface pour le VLAN 10
+interface GigabitEthernet0/0/0.10
+ encapsulation dot1Q 10  # Définir le VLAN 10
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+exit
+
+# Configurer une sous-interface pour le VLAN 30
+interface GigabitEthernet0/0/0.30
+ encapsulation dot1Q 30  # Définir le VLAN 30
+ ip address 192.168.30.1 255.255.255.0
+ no shutdown
+exit
+----
+
+
+== 3. Activer le Routage Inter-VLAN
+
+[source, bash]
+----
+ip routing  # Activer le routage pour permettre la communication inter-VLAN
+----
+
+
+== 4. Ajouter une Route par Défaut
+
+[source, bash]
+----
+ip route 0.0.0.0 0.0.0.0 [adresse IP de la passerelle par défaut]
+----
+
+
+== 5. Configuration d’une Adresse IP Helper pour le Relais DHCP
+
+[source, bash]
+----
+# Configurer le relais DHCP pour un VLAN spécifique
+interface GigabitEthernet0/0/0.10
+ ip helper-address [adresse IP du serveur DHCP]  # Rediriger les requêtes DHCP
+exit
+----
+
+
+== 6. Configuration de VLANs sur un Switch
+
+
+[source, bash]
+----
+# Créer un VLAN et lui attribuer un nom
+vlan [VLAN ID]
+ name [Nom du VLAN]
+exit
+
+# Assigner un port à un VLAN en mode Access
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan [VLAN ID]
+exit
+
+# Configurer un port en mode Trunk pour transporter plusieurs VLANs
+interface GigabitEthernet0/0
+ switchport mode trunk
+ switchport trunk allowed vlan [liste des VLANs autorisés, ex: 10,20,30]
+exit
+----
+
+== 7. Sauvegarder la Configuration
+
+[source, bash]
+----
+write memory  # Sauvegarde la configuration en cours
+----
+
+== 8. Vérification de la Configuration et du Diagnostic
+
+
+[source, bash]
+----
+show ip interface brief  # Affiche les interfaces et leurs adresses IP
+show vlan brief  # Affiche la configuration des VLANs
+show interfaces trunk  # Affiche les interfaces configurées en trunk et les VLANs autorisés
+show running-config  # Affiche la configuration en cours
+show ip route  # Affiche la table de routage
+show ip dhcp binding  # Affiche les baux DHCP actifs (si le routeur fait office de serveur DHCP)
+----
+
+
+
+
+
+== Exemple Complet de Configuration (pour notre scénario)
+[source, bash]
+----
+enable
+configure terminal
+
+# Configurer les sous-interfaces pour les VLANs
+interface GigabitEthernet0/0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+exit
+
+interface GigabitEthernet0/0/0.30
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+ no shutdown
+exit
+
+# Activer le routage inter-VLAN
+ip routing
+
+# Configurer une route par défaut vers un simulateur d'Internet
+ip route 0.0.0.0 0.0.0.0 8.8.8.8
+
+# Configurer le relais DHCP sur le VLAN 10 pour pointer vers le serveur DHCP dans le VLAN 30
+interface GigabitEthernet0/0/0.10
+ ip helper-address 192.168.30.[adresse du serveur DHCP]
+exit
+
+# Sauvegarder la configuration
+write memory
+----
+
+
+
+== comment configurer une interface Loopback0 sur un routeur Cisco, ainsi que quelques informations supplémentaires.
+
+
+=== Utilisation et Configuration de l'Interface Loopback
+
+L'interface Loopback0 est une interface virtuelle qui reste active tant que le routeur est allumé, et elle est souvent utilisée pour :
+
+
+=== ...
+
+Tester la connectivité (en tant qu'adresse IP statique permanente).
+
+Simuler une adresse IP externe, comme dans votre cas avec 8.8.8.8 pour représenter un accès à l’Internet.
+
+Commande de Configuration pour Loopback0
+
+=== ...
+
+Voici comment configurer Loopback0 pour simuler 8.8.8.8 :
+
+[source, bash]
+----
+enable
+configure terminal
+interface Loopback0
+ ip address 8.8.8.8 255.255.255.255
+ no shutdown
+exit
+----
+
+
+=== Explications
+
+
+=== interface Loopback0 : Crée et configure l’interface Loopback0.
+
+=== ip address 8.8.8.8 255.255.255.255 : 
+
+Attribue l'adresse IP 8.8.8.8 avec un masque /32, indiquant qu'il s'agit d'une adresse unique (pas une plage).
+
+
+=== ...
+
+no shutdown : Active l'interface (par défaut, une interface loopback est déjà active, mais il est bon de le préciser).
+
+
+=== Commande pour Vérifier la Configuration de Loopback
+
+Après la configuration, utilisez la commande suivante pour vérifier que l'interface est active et que l’adresse est correcte :
+
+[source, bash]
+----
+show ip interface brief
+----
+
+
+
+Cette commande vous montrera toutes les interfaces avec leur état et leur adresse IP, y compris Loopback0 avec 8.8.8.8 comme adresse.
+
+
+
+
+
+

@@ -1,0 +1,300 @@
+= réserver des adresses DHCP 
+
+== Introduction
+
+Pour réserver des adresses DHCP pour des dispositifs spécifiques, il faut configurer des réservations d’adresses dans votre serveur DHCP. 
+
+=== ...
+
+Une réservation DHCP permet d'attribuer une adresse IP spécifique à un dispositif particulier basé sur son adresse MAC. 
+
+=== ...
+
+Voici comment procéder pour configurer des réservations, que vous utilisiez un serveur DHCP sur un routeur Cisco ou un autre serveur DHCP.
+
+
+== 1. Sur un Routeur Cisco avec DHCP Intégré
+
+Si vous utilisez un routeur Cisco comme serveur DHCP, vous pouvez configurer une réservation d’adresse IP comme suit :
+
+[source, bash]
+----
+ip dhcp pool VLAN10_Pool
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 192.168.10.2
+ host 192.168.10.50 255.255.255.0
+ client-identifier 0100.1122.3344.55
+----
+
+
+
+=== host : 
+
+Spécifie l'adresse IP que vous souhaitez réserver (par exemple, 192.168.10.50).
+
+=== client-identifier : 
+
+Spécifie l’adresse MAC du dispositif auquel cette adresse IP doit être réservée. 
+
+=== ...
+
+Précédez l’adresse MAC par 01 pour indiquer le type Ethernet (par exemple, 0100.1122.3344.55).
+
+== 2. Sur un Serveur DHCP (Windows, Linux)
+
+=== Windows Server DHCP :
+
+Ouvrez le gestionnaire DHCP et allez dans la plage d’adresses configurée.
+
+=== ...
+
+Faites un clic droit sur "Réservations" et sélectionnez "Nouvelle réservation".
+
+=== ...
+
+Entrez le nom de la réservation, l'adresse IP que vous souhaitez réserver, l'adresse MAC du dispositif, et une description si nécessaire.
+
+=== ...
+
+Cliquez sur "Ajouter" pour appliquer la réservation.
+
+
+=== Serveur DHCP sous Linux (par exemple, isc-dhcp-server) :
+
+Ouvrez le fichier de configuration DHCP (/etc/dhcp/dhcpd.conf).
+
+=== Ajoutez une configuration de réservation, par exemple :
+
+[source, bash]
+----
+host device_name {
+  hardware ethernet 00:11:22:33:44:55;
+  fixed-address 192.168.10.50;
+}
+
+----
+
+
+=== hardware ethernet : 
+
+L’adresse MAC du dispositif.
+
+=== fixed-address : 
+
+L’adresse IP que vous souhaitez réserver.
+
+
+=== Redémarrez le service DHCP pour appliquer les changements :
+
+[source, bash]
+----
+sudo systemctl restart isc-dhcp-server
+----
+
+
+=== 3. Vérification et Test
+
+Une fois les réservations configurées, redémarrez le dispositif concerné pour qu’il obtienne l’adresse IP réservée. 
+
+=== ...
+
+Vous pouvez vérifier dans le tableau des baux DHCP pour confirmer que le dispositif reçoit bien l’adresse réservée.
+
+
+=== ...
+
+Dans Cisco Packet Tracer, la configuration de réservations DHCP se fait de manière similaire à celle d’un routeur Cisco réel. 
+
+Voici les étapes pour configurer une réservation d’adresse DHCP dans Packet Tracer pour un routeur Cisco :
+
+
+== Étapes de configuration pour une réservation DHCP dans Cisco Packet Tracer
+Accédez au Routeur dans Packet Tracer :
+
+Cliquez sur le routeur, puis allez dans l'onglet CLI (ou Config, selon vos préférences).
+
+Entrez en Mode de Configuration Globale :
+
+Dans la CLI, entrez les commandes suivantes pour passer en mode de configuration :
+
+[source, bash]
+----
+enable
+configure terminal
+----
+
+
+
+=== Créer un Pool DHCP :
+
+Créez un pool DHCP pour le VLAN ou le sous-réseau souhaité en utilisant les commandes suivantes :
+[source, bash]
+----
+ip dhcp pool VLAN10_Pool
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.1
+dns-server 192.168.10.2
+----
+
+
+=== Ajouter la Réservation d'Adresse :
+
+Pour réserver une adresse IP spécifique à un dispositif (basé sur son adresse MAC), utilisez la commande host pour spécifier l'adresse IP réservée et client-identifier pour définir l'adresse MAC du client.
+
+=== ...
+
+Par exemple, pour réserver l'adresse 192.168.10.50 pour un dispositif avec l'adresse MAC 00:11:22:33:44:55, utilisez :
+
+[source, bash]
+----
+host 192.168.10.50 255.255.255.0
+client-identifier 0100.1122.3344.55
+----
+
+
+=== Remarque : 
+
+Dans client-identifier, le préfixe 01 est utilisé pour indiquer que l'adresse MAC correspond à un dispositif Ethernet.
+
+=== Enregistrer la Configuration :
+
+Sauvegardez la configuration en quittant le mode de configuration :
+[source, bash]
+----
+end
+write memory
+----
+
+
+=== Tester la Réservation :
+
+Connectez le dispositif concerné au réseau et redémarrez-le pour qu'il sollicite une adresse via DHCP. 
+
+=== ...
+
+Vérifiez que l'adresse IP assignée est bien celle que vous avez réservée.
+
+=== Vérification dans Cisco Packet Tracer
+
+Dans Packet Tracer, vous pouvez vérifier les baux DHCP attribués en accédant à la configuration du routeur ...
+
+=== ...
+
+et en consultant la liste des baux actifs pour confirmer que le dispositif reçoit l'adresse IP réservée.
+
+=== ...
+
+Cette méthode permet de réserver des adresses pour des dispositifs spécifiques dans un réseau géré par DHCP sous Cisco Packet Tracer.
+
+
+=== ...
+
+
+Si votre serveur DHCP est dans un VLAN différent de celui des clients (par exemple, le serveur DHCP/DNS est dans le VLAN 30, ...
+
+=== ...
+
+tandis que le VLAN 10 correspond au département marketing), il est nécessaire de configurer ...
+
+=== ...
+
+un relais DHCP pour que les clients du VLAN 10 puissent recevoir des adresses IP du serveur DHCP dans le VLAN 30. 
+
+
+=== ...
+
+Voici comment faire dans Cisco Packet Tracer :
+
+Configuration du Relais DHCP (DHCP Helper Address)
+
+=== Vérifiez la Connectivité Inter-VLAN :
+
+Assurez-vous que le routage inter-VLAN est activé pour permettre la communication entre les VLANs 10 et 30. 
+
+=== ...
+
+Cela peut être fait soit sur un switch de niveau 3, soit sur un routeur configuré avec des sous-interfaces.
+
+=== Configurer le Relais DHCP sur l'Interface du VLAN 10 :
+
+Sur l'interface du routeur ou la sous-interface correspondant au VLAN 10, ...
+
+=== ...
+
+configurez une adresse de relais DHCP pour rediriger les requêtes DHCP vers le serveur dans le VLAN 30.
+
+=== ...
+
+Supposons que l'interface VLAN 10 est configurée sur GigabitEthernet0/0.10, ...
+
+=== ...
+
+vous pouvez configurer le relais DHCP avec l’adresse IP du serveur DHCP dans le VLAN 30.
+
+
+=== Voici un exemple de commande :
+
+[source, bash]
+----
+interface GigabitEthernet0/0.10
+ ip helper-address 192.168.30.x  # Remplacez par l'IP du serveur DHCP dans le VLAN 30
+----
+
+=== ip helper-address : 
+
+Cette commande permet aux requêtes DHCP (qui sont des requêtes broadcast) de passer d'un VLAN à un autre en les redirigeant spécifiquement vers l'adresse IP du serveur DHCP.
+
+
+=== Vérifier les Paramètres du Serveur DHCP :
+
+Sur le serveur DHCP dans le VLAN 30, assurez-vous que vous avez un pool configuré pour le VLAN 10. 
+
+=== ...
+
+Par exemple, si le sous-réseau du VLAN 10 est 192.168.10.0/24, assurez-vous que le pool DHCP couvre ce sous-réseau.
+
+
+=== Exemple de pool DHCP sur le serveur (si vous utilisez un serveur Cisco) :
+
+[source, bash]
+----
+ip dhcp pool VLAN10_Pool
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 192.168.30.x  # Adresse du serveur DNS
+----
+
+
+=== Redémarrer un Dispositif dans le VLAN 10 pour Tester :
+
+Connectez un dispositif client dans le VLAN 10, redémarrez-le pour qu'il demande une adresse IP via DHCP, et vérifiez qu’il reçoit bien une adresse IP provenant du serveur DHCP dans le VLAN 30.
+
+
+=== Points à Vérifier
+
+
+
+=== Trunk entre les Switches : 
+
+Assurez-vous que le lien entre les switches est configuré en mode trunk pour transporter les VLANs 10 et 30.
+
+=== Routage Inter-VLAN : 
+
+Activez le routage inter-VLAN sur le routeur ou le switch de niveau 3 pour permettre aux VLANs 10 et 30 de communiquer.
+
+=== Aucune ACL Bloquante : 
+
+Vérifiez qu'il n'y a pas d'ACLs (Listes de Contrôle d'Accès) qui bloquent les requêtes DHCP entre les VLANs.
+
+=== ...
+
+En suivant ces étapes, les dispositifs du VLAN 10 devraient pouvoir recevoir une adresse IP du serveur DHCP situé dans le VLAN 30 grâce au relais DHCP.
+
+
+
+
+
+
+
+

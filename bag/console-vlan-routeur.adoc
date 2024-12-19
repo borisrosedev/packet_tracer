@@ -1,0 +1,327 @@
+= L'onglet Programming sur le PC 
+
+== Introduction
+
+Oui, maintenant que votre ordinateur est connecté au routeur dans Cisco Packet Tracer, ...
+
+
+=== ...
+
+vous pouvez utiliser l'onglet Programming sur le PC pour exécuter des scripts JavaScript et interagir avec le routeur via des connexions réseau standard (comme Telnet ou SSH) si le routeur est configuré pour ces protocoles. 
+
+=== ...
+
+L’onglet Programming ne permet pas directement d'interagir avec une connexion console comme un terminal, ...
+
+=== ...
+
+mais il peut être très utile pour automatiser des tâches de configuration à distance une fois que Telnet ou SSH est activé.
+
+
+
+== Possibilités avec l'Onglet "Programming" dans ce Contexte
+
+Automatiser les Configurations avec Telnet ou SSH
+
+
+Vous pouvez écrire des scripts JavaScript pour se connecter automatiquement au routeur et envoyer des commandes de configuration.
+
+=== ...
+
+Par exemple, vous pouvez configurer une interface, activer un protocole de routage ou configurer un VLAN si le routeur le permet.
+
+
+=== Exemple de Script JavaScript pour Telnet :
+
+[source, javascript]
+----
+var telnet = new Telnet();
+telnet.open("192.168.1.1", 23); // Adresse IP du routeur et port Telnet
+
+telnet.send("admin\n");  // Nom d'utilisateur
+telnet.send("cisco\n");   // Mot de passe
+
+// Activer le mode Enable et entrer dans le mode configuration
+telnet.send("enable\n");
+telnet.send("cisco\n");   // Mot de passe Enable
+telnet.send("configure terminal\n");
+
+// Configurer l'interface GigabitEthernet0/0
+telnet.send("interface GigabitEthernet0/0\n");
+telnet.send("ip address 192.168.1.1 255.255.255.0\n");
+telnet.send("no shutdown\n");
+telnet.send("exit\n");
+
+// Terminer la session
+telnet.send("end\n");
+telnet.send("exit\n");
+telnet.close();
+----
+
+
+Ce script envoie des commandes pour configurer l’interface GigabitEthernet0/0 du routeur via Telnet.
+
+=== ...
+
+Création de Scénarios Automatisés
+
+L'onglet Programming permet de créer des scripts qui vérifient si certaines configurations sont correctes ou de simuler des événements dans le réseau.
+
+=== ...
+
+Par exemple, vous pouvez automatiser des vérifications pour vous assurer que ...
+
+=== ...
+
+les configurations de base sont appliquées, comme la présence d’une adresse IP ou l’activation d’un protocole de routage.
+
+
+=== Exemple de Script de Vérification de Configuration :
+
+[source, javascript]
+----
+var telnet = new Telnet();
+telnet.open("192.168.1.1", 23);
+telnet.send("admin\n");
+telnet.send("cisco\n");
+telnet.send("show running-config\n");
+
+// Vérifie si l'adresse IP est configurée
+var config = telnet.receive();
+if (config.includes("192.168.1.1")) {
+    console.log("Adresse IP configurée correctement.");
+} else {
+    console.log("L'adresse IP n'est pas configurée.");
+}
+telnet.close();
+----
+
+=== Simulation de Scénarios de Réseau
+
+Vous pouvez simuler des scénarios de réseau dynamiques en activant ou désactivant des interfaces, en ajustant les coûts de lien, ou en redémarrant des interfaces.
+
+=== ...
+
+Par exemple, simuler une panne d’interface sur le routeur pour observer le comportement de redondance dans un réseau.
+
+
+=== Exemple de Simulation de Panne d’Interface :
+
+[source, javascript]
+----
+var telnet = new Telnet();
+telnet.open("192.168.1.1", 23);
+telnet.send("admin\n");
+telnet.send("cisco\n");
+telnet.send("enable\n");
+telnet.send("cisco\n");
+telnet.send("configure terminal\n");
+
+// Désactiver puis réactiver une interface après un délai
+telnet.send("interface GigabitEthernet0/1\n");
+telnet.send("shutdown\n");
+setTimeout(function() {
+    telnet.send("no shutdown\n");
+    telnet.close();
+}, 5000); // Réactive l'interface après 5 secondes
+----
+
+
+== Automatisation de Tests de Connectivité et Surveillance
+
+Vous pouvez écrire des scripts pour envoyer des pings, vérifier l’état des interfaces, et surveiller la connectivité entre les appareils.
+
+=== ...
+
+Cela permet de créer des scripts pour surveiller l’état de votre réseau et détecter des problèmes.
+
+=== Exemple de Test de Connectivité :
+
+[source, javascript]
+----
+var telnet = new Telnet();
+telnet.open("192.168.1.1", 23);
+telnet.send("admin\n");
+telnet.send("cisco\n");
+telnet.send("enable\n");
+telnet.send("cisco\n");
+telnet.send("ping 192.168.1.2\n");
+
+
+var result = telnet.receive();
+
+if (result.includes("Success")) {
+    console.log("Connectivité établie avec 192.168.1.2.");
+} else {
+    console.log("Échec de la connectivité avec 192.168.1.2.");
+}
+telnet.close();
+----
+
+== Limites et Considérations
+
+=== Accès Telnet/SSH requis : 
+
+Pour utiliser des scripts, le routeur doit être accessible via Telnet ou SSH. 
+
+=== ...
+
+La connexion console ne peut pas être automatisée directement via l’onglet Programming.
+
+
+=== Fonctionnalités limitées de JavaScript : 
+
+Packet Tracer utilise une version simplifiée de JavaScript, donc certaines bibliothèques et fonctionnalités avancées de JavaScript ne sont pas disponibles.
+
+
+=== ...
+
+Vérifier les configurations et surveiller la connectivité.
+
+
+
+Ces scripts peuvent être très utiles pour automatiser des tâches dans des environnements réseau simulés, ...
+
+
+=== ...
+
+
+mais ils nécessitent une configuration initiale pour activer Telnet ou SSH sur le routeur.
+
+
+
+== Sous-interfaces
+
+Pour configurer des sous-interfaces sur votre routeur sans adresse IP initiale, ...
+
+
+=== ...
+
+vous pouvez utiliser la connexion console pour accéder directement au routeur depuis votre ordinateur, puis configurer les sous-interfaces pour les VLANs 10, 20, et 30.
+
+
+=== ...
+
+Étapes de Configuration des Sous-Interfaces pour VLAN 10, 20, et 30
+
+
+
+Connexion au Routeur via la Console
+
+
+=== ...
+
+Si vous êtes déjà connecté au routeur par un câble console, ouvrez le terminal sur votre PC en allant dans Desktop > Terminal.
+
+
+=== ...
+
+Utilisez les paramètres par défaut du terminal (Bits par seconde : 9600, etc.) pour accéder à l’interface CLI du routeur.
+
+
+=== ...
+
+Activer le Mode Enable
+
+Sur l'interface CLI du routeur, entrez la commande suivante pour passer en mode Enable :
+
+[source, bash]
+----
+Router> enable
+----
+
+=== ...
+
+Accéder au Mode de Configuration Globale
+
+Passez en mode de configuration globale pour configurer les sous-interfaces :
+[source, bash]
+----
+Router# configure terminal
+----
+
+Création des Sous-Interfaces pour les VLANs
+
+=== ...
+
+Configurez chaque sous-interface en attribuant une adresse IP pour chaque VLAN.
+
+=== ...
+
+Voici un exemple de configuration pour trois VLANs (10, 20, et 30) sur l'interface GigabitEthernet0/0 :
+
+[source, bash]
+----
+Router(config)\# interface GigabitEthernet0/0.10
+Router(config-subif)\# encapsulation dot1Q 10
+Router(config-subif)\# ip address 192.168.10.1 255.255.255.0
+Router(config-subif)\# exit
+
+Router(config)\# interface GigabitEthernet0/0.20
+Router(config-subif)\# encapsulation dot1Q 20
+Router(config-subif)\# ip address 192.168.20.1 255.255.255.0
+Router(config-subif)\# exit
+
+Router(config)\# interface GigabitEthernet0/0.30
+Router(config-subif)\# encapsulation dot1Q 30
+Router(config-subif)\# ip address 192.168.30.1 255.255.255.0
+Router(config-subif)\# exit
+----
+
+=== Dans cet exemple :
+
+La sous-interface GigabitEthernet0/0.10 est configurée pour le VLAN 10 avec l’adresse IP 192.168.10.1/24.
+
+=== ...
+
+La sous-interface GigabitEthernet0/0.20 est configurée pour le VLAN 20 avec l’adresse IP 192.168.20.1/24.
+
+=== ...
+
+La sous-interface GigabitEthernet0/0.30 est configurée pour le VLAN 30 avec l’adresse IP 192.168.30.1/24.
+
+=== ...
+
+La commande encapsulation dot1Q permet de spécifier le VLAN pour chaque sous-interface.
+
+
+=== ...
+
+Vérification de la Configuration
+
+Après avoir configuré les sous-interfaces, vous pouvez vérifier leur état avec la commande suivante :
+
+[source, bash]
+----
+Router# show ip interface brief
+----
+
+
+Cette commande vous montrera toutes les interfaces et sous-interfaces avec leurs adresses IP et leur état.
+
+
+=== ...
+
+
+Activer le Routage Inter-VLAN (si nécessaire)
+
+En créant des sous-interfaces, votre routeur peut maintenant agir en tant que routeur pour ces VLANs, permettant ainsi la communication entre eux, si nécessaire.
+
+=== Explications Complémentaires
+
+
+=== Sous-interfaces : 
+
+Elles permettent de créer plusieurs interfaces logiques sur une même interface physique. 
+
+=== ...
+
+Chaque sous-interface est associée à un VLAN spécifique grâce à l'encapsulation dot1Q.
+
+=== Encapsulation dot1Q : 
+
+Cette commande configure le routage inter-VLAN en permettant à chaque sous-interface de transporter du trafic pour un VLAN spécifique.
+
+=== ...
+
+Après ces étapes, votre routeur aura des sous-interfaces configurées pour les VLANs 10, 20, et 30, chacune avec une adresse IP pour agir comme passerelle par défaut pour chaque VLAN.

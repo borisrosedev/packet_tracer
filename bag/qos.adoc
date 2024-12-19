@@ -1,0 +1,302 @@
+= La Quality of Service (QoS)
+
+== Introduction
+
+La Quality of Service (QoS) est essentielle pour prioriser la bande passante pour certaines applications ou utilisateurs, ...
+
+=== ...
+
+particulièrement dans des environnements où des ressources critiques comme la vidéo, ...
+
+
+=== ...
+
+
+la voix ou des applications en temps réel doivent être protégées contre les congestions du réseau.
+
+=== Scénario Exemple :
+
+=== Nous avons un réseau avec trois VLANs :
+
+=== VLAN 10 : 
+
+utilisé pour le trafic VoIP (Voix sur IP)
+
+=== VLAN 20 : 
+
+utilisé pour le trafic général
+=== VLAN 30 : 
+
+utilisé pour les utilisateurs ou les applications sensibles à la latence (par exemple, vidéoconférence)
+
+=== Nous voulons :
+
+* Prioriser le trafic VoIP du VLAN 10.
+* Garantir une bande passante minimale pour le VLAN 30 (applications critiques).
+* Permettre au VLAN 20 d'utiliser la bande passante restante.
+
+== 1. Création de la Topologie
+
+* Ajoutez un switch avec plusieurs PCs et téléphones VoIP connectés à différents VLANs dans Cisco Packet Tracer.
+
+=== ...
+
+* Configurez les VLANs 10, 20, et 30 sur le switch.
+
+=== ...
+
+* Connectez un routeur au switch pour permettre le routage inter-VLAN.
+
+=== ...
+
+* Configurez les adresses IP sur les interfaces du routeur correspondant à chaque VLAN, en utilisant une configuration similaire à celle d'un router-on-a-stick.
+
+
+== 2. Configurer les VLANs sur le Switch
+
+=== Sur le switch, configurez les VLANs :
+
+[source, bash]
+----
+enable
+configure terminal
+
+vlan 10
+name VOIP
+
+vlan 20
+name GENERAL
+
+vlan 30
+name CRITICAL
+
+exit
+----
+
+
+== 3. Configurer les Interfaces pour Chaque VLAN
+
+Assignez les ports du switch aux VLANs. Par exemple, les téléphones VoIP sont sur VLAN 10, les ordinateurs généraux sur VLAN 20, et les machines critiques sur VLAN 30.
+
+[source, bash]
+----
+interface fastEthernet 0/1
+switchport mode access
+switchport access vlan 10
+exit
+
+interface fastEthernet 0/2
+switchport mode access
+switchport access vlan 20
+exit
+
+interface fastEthernet 0/3
+switchport mode access
+switchport access vlan 30
+exit
+----
+
+
+== 4. Configurer QoS sur le Routeur
+
+Pour configurer la QoS sur le routeur, nous allons créer des classes de trafic, puis définir une politique de QoS pour chaque VLAN.
+
+
+== Étapes :
+
+== 4.1. Créer des Class-Maps pour Identifier le Trafic
+
+Nous allons d’abord créer des class-maps pour identifier le trafic à prioriser, comme le trafic VoIP, les applications critiques, etc.
+
+=== ...
+
+Sur le routeur, entrez en mode configuration globale :
+
+
+=== Pour le trafic VoIP (VLAN 10) :
+
+[source, bash]
+----
+class-map match-all VOIP-TRAFFIC
+match 
+----
+
+
+=== Pour le trafic général (VLAN 20) :
+
+[source, bash]
+----
+class-map match-all GENERAL-TRAFFIC
+match ip precedence 0
+exit
+----
+
+=== Pour les applications critiques (VLAN 30) :
+
+[source, bash]
+----
+class-map match-all CRITICAL-TRAFFIC
+match ip precedence 5
+exit
+----
+
+
+
+== 4.2. Créer des Policy-Maps pour Définir les Actions de QoS
+
+Maintenant, nous allons créer des policy-maps pour spécifier comment traiter le trafic correspondant aux classes précédemment définies.
+
+
+=== Pour le trafic VoIP (VLAN 10) :
+
+Le trafic VoIP est très sensible à la latence. Nous allons lui attribuer une priorité maximale.
+
+
+[source, bash]
+----
+policy-map PRIORITY-QUEUE
+class VOIP-TRAFFIC
+priority percent 30
+exit
+----
+
+
+=== Pour les applications critiques (VLAN 30) :
+
+Nous voulons garantir un certain niveau de bande passante pour les applications critiques.
+bash
+
+=== ...
+
+[source, bash]
+----
+policy-map PRIORITY-QUEUE
+class CRITICAL-TRAFFIC
+bandwidth percent 20
+exit
+----
+
+
+=== Pour le trafic général (VLAN 20) :
+
+Le trafic général peut utiliser la bande passante restante.
+
+=== ...
+
+[source, bash]
+----
+policy-map PRIORITY-QUEUE
+class GENERAL-TRAFFIC
+fair-queue
+exit
+----
+
+
+== 4.3. Appliquer la Politique de QoS sur l'Interface Sortante
+
+Appliquez la policy-map à l'interface gigabitEthernet 0/1 du routeur qui est connectée au switch.
+
+[source, bash]
+----
+interface gigabitEthernet 0/1
+service-policy output PRIORITY-QUEUE
+exit
+----
+
+
+== 5. Vérification de la Configuration
+
+Après avoir configuré la QoS, il est important de vérifier si la configuration est correctement appliquée et fonctionne comme prévu.
+
+
+=== Vérifier la Configuration QoS Appliquée à l'Interface :
+
+[source, bash]
+----
+show policy-map interface gigabitEthernet 0/1
+----
+
+Vérifier les Statistiques de QoS : Cette commande montre les paquets correspondant aux différentes classes de trafic, ainsi que la quantité de bande passante allouée.
+
+[source, bash]
+----
+show policy-map
+----
+
+
+=== Tester la Priorité de la Bande Passante :
+
+Simulez du trafic à partir des VLANs 10, 20, et 30 (par exemple, utilisez des pings, des appels VoIP, ou des téléchargements lourds).
+
+=== ...
+
+Observez comment la bande passante est répartie lorsque plusieurs types de trafic sont présents simultanément.
+
+== 6. Options Avancées de QoS
+
+Voici quelques options supplémentaires pour raffiner vos politiques de QoS :
+
+=== ...
+
+=== Policing (Limitation de bande passante) : 
+
+Si vous souhaitez limiter la bande passante au-delà d’un certain seuil, vous pouvez utiliser le policing.
+
+
+=== Exemple :
+
+[source, bash]
+----
+class VOIP-TRAFFIC
+police 1000000 conform-action transmit exceed-action drop
+----
+
+
+=== Shaping : Vous pouvez aussi configurer un shaping pour lisser le trafic en cas de congestion.
+
+Exemple :
+
+bash
+Copier le code
+class CRITICAL-TRAFFIC
+shape average 2000000
+
+
+
+== 7. Résumé des Commandes Importantes
+
+=== Création des class-maps pour identifier le trafic :
+
+[source, bash]
+-----
+class-map match-all VOIP-TRAFFIC
+match ip dscp ef
+-----
+
+=== Création des policy-maps pour définir les actions de QoS :
+
+[source, bash]
+-----
+policy-map PRIORITY-QUEUE
+class VOIP-TRAFFIC
+priority percent 30
+-----
+
+
+==== Appliquer la policy-map à une interface :
+
+[source, bash]
+-----
+interface gigabitEthernet 0/1
+service-policy output PRIORITY-QUEUE
+-----
+
+
+==== Vérifier l'application des politiques de QoS :
+
+[source, bash]
+----
+show policy-map interface gigabitEthernet 0/1
+----
+
+

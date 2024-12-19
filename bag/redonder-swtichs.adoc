@@ -1,0 +1,339 @@
+= Redonder un switch
+
+== Introduction
+
+Redonder votre switch cœur de réseau est une étape cruciale pour améliorer la résilience et la disponibilité de votre infrastructure réseau. 
+1. Évaluer vos besoins
+Identifiez les risques actuels : Quels sont les impacts en cas de panne de votre switch principal ?
+Estimez le niveau de disponibilité nécessaire : 99.9 % (quelques minutes de panne par an) ou 99.99 % (quelques secondes de panne) ?
+Préparez un budget pour le matériel, la configuration et la maintenance.
+2. Choisir une architecture de redondance
+Plusieurs approches sont possibles selon vos besoins :
+
+a. Stacking
+Si vos switches supportent le stacking (comme Cisco StackWise, Aruba VSF, ou Juniper Virtual Chassis), configurez plusieurs switches pour fonctionner comme une seule unité logique.
+Avantages : Simplicité de configuration et une seule adresse IP de gestion.
+b. Virtual Chassis ou VSS (Virtual Switching System)
+Permet de virtualiser deux switches pour qu'ils fonctionnent comme un seul. Cela assure une tolérance aux pannes tout en simplifiant la gestion.
+c. Redondance matérielle classique
+Installez deux switches distincts et configurez des liens redondants entre eux.
+Utilisez des protocoles de redondance comme Spanning Tree Protocol (STP) ou Rapid STP pour éviter les boucles réseau.
+3. Configurer des liens redondants
+EtherChannel (ou LAG - Link Aggregation Group) :
+Agrégez plusieurs liens physiques entre vos switches et vos équipements pour augmenter la bande passante et assurer une redondance au niveau des liens.
+Protocole de gestion des liens :
+Configurez LACP (Link Aggregation Control Protocol) pour une gestion dynamique des liens redondants.
+4. Assurer la redondance des passerelles
+Configurez une redondance au niveau de la passerelle pour éviter les interruptions en cas de panne de votre switch cœur :
+HSRP (Hot Standby Router Protocol), VRRP (Virtual Router Redundancy Protocol), ou GLBP (Gateway Load Balancing Protocol) pour des passerelles IP redondantes.
+5. Tester et monitorer
+Tests de basculement :
+Déconnectez un switch ou un lien pour vérifier que le trafic est bien redirigé vers les équipements redondants.
+Supervision :
+Utilisez des outils comme Nagios, PRTG, ou Zabbix pour surveiller les performances et la disponibilité de vos switches.
+6. Planifier la maintenance
+Assurez-vous que les firmwares sont à jour sur vos switches.
+Vérifiez régulièrement l'état des liens et les configurations pour éviter les mauvaises surprises.
+Exemple d’architecture :
+Deux switches redondants avec liens agrégés, configurés en VSS, et reliés à plusieurs équipements en utilisant LACP et VRRP pour la redondance.
+
+Si vous avez des modèles spécifiques de switches, je peux vous guider pour leur configuration exacte.
+
+
+
+
+
+Vous avez dit :
+j'utilise un switch IOsV 
+ChatGPT a dit :
+
+Si vous utilisez un switch IOSv (émulation de switch Cisco dans GNS3 ou EVE-NG, par exemple), vous pouvez mettre en place une redondance réseau en simulant les configurations que vous appliqueriez dans un environnement physique. Voici comment configurer la redondance avec un switch IOSv :
+
+1. Configurer l’agrégation de liens avec EtherChannel
+L’agrégation de liens permet de combiner plusieurs interfaces physiques pour améliorer la redondance et la bande passante.
+
+Étapes :
+Entrez en mode configuration :
+bash
+Copier le code
+configure terminal
+Créez un groupe EtherChannel (par exemple, groupe 1) avec le protocole LACP :
+bash
+Copier le code
+interface range g0/1 - 2
+channel-group 1 mode active
+active : utilise LACP pour négocier les liens.
+on : force l’agrégation sans négociation (risqué sans coordination des deux côtés).
+Configurez le port channel créé :
+bash
+Copier le code
+interface port-channel 1
+switchport mode trunk
+Active le mode trunk pour transporter plusieurs VLAN si nécessaire.
+2. Configurer la redondance de passerelle avec HSRP
+HSRP (Hot Standby Router Protocol) permet de créer une passerelle virtuelle entre deux switches redondants.
+
+Étapes :
+Assurez-vous que le VLAN utilisé pour les hôtes est configuré :
+bash
+Copier le code
+vlan 10
+name REDONDANCE
+Configurez HSRP sur les interfaces VLAN des deux switches :
+Switch 1 :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.1.2 255.255.255.0
+standby 1 ip 192.168.1.1
+standby 1 priority 110
+standby 1 preempt
+Switch 2 :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.1.3 255.255.255.0
+standby 1 ip 192.168.1.1
+standby 1 priority 100
+standby 1 preempt
+Explication :
+192.168.1.1 est l'adresse IP virtuelle de la passerelle.
+Le switch avec la priorité la plus élevée (110 ici) devient actif.
+preempt permet au switch avec la priorité la plus élevée de récupérer son rôle actif après un redémarrage.
+3. Configurer STP pour éviter les boucles réseau
+Assurez-vous que Spanning Tree Protocol (STP) est activé pour éviter les boucles sur votre réseau redondant.
+
+Vérifiez que le mode RSTP (Rapid Spanning Tree Protocol) est activé :
+bash
+Copier le code
+spanning-tree mode rapid-pvst
+Configurez les priorités STP pour vos switches :
+Switch primaire :
+bash
+Copier le code
+spanning-tree vlan 10 priority 4096
+Switch secondaire :
+bash
+Copier le code
+spanning-tree vlan 10 priority 8192
+4. Tester la redondance
+Simulation de panne :
+Débranchez un lien d’EtherChannel pour vérifier que le trafic continue sur les autres liens.
+Désactivez l'interface VLAN principale d'un switch pour voir si l'autre prend le relais via HSRP.
+Commandes utiles pour le diagnostic :
+Vérifiez l'état des EtherChannels :
+bash
+Copier le code
+show etherchannel summary
+Vérifiez l’état de HSRP :
+bash
+Copier le code
+show standby brief
+Vérifiez STP :
+bash
+Copier le code
+show spanning-tree
+Avec ces configurations, votre switch IOSv sera redondé de manière fonctionnelle, simulant une architecture robuste prête à être mise en production dans un environnement réel. Si vous avez besoin d’aide pour un détail particulier, n’hésitez pas !
+
+
+
+
+
+Vous avez dit :
+je veux redonder et un load balancer en même temps est-ce possible
+ChatGPT a dit :
+
+Oui, il est tout à fait possible de redonder votre réseau et d’y intégrer un load balancer en même temps. Cela permet de répartir le trafic entre plusieurs chemins tout en assurant une haute disponibilité. Voici les concepts et étapes nécessaires pour y parvenir.
+
+1. Concepts clés à comprendre
+Redondance réseau : Garantit que si un chemin ou un appareil tombe en panne, le trafic est redirigé via un chemin alternatif.
+Load balancing (équilibrage de charge) : Répartit le trafic entre plusieurs chemins ou dispositifs pour optimiser les performances et éviter la surcharge.
+Protocoles et technologies clés :
+HSRP/VRRP/GLBP pour les passerelles redondantes.
+LACP (EtherChannel) pour l’agrégation de liens.
+GLBP (Gateway Load Balancing Protocol) pour répartir la charge entre plusieurs passerelles, en plus de la redondance.
+2. GLBP pour redondance et load balancing
+Si vous souhaitez équilibrer la charge entre plusieurs switches et offrir une passerelle virtuelle, le Gateway Load Balancing Protocol (GLBP) est la meilleure option.
+
+Pourquoi GLBP ?
+Contrairement à HSRP ou VRRP, qui offrent uniquement une redondance active/standby, GLBP permet d’utiliser toutes les passerelles disponibles de manière simultanée.
+Il répartit la charge en utilisant des algorithmes comme le round-robin ou le poids.
+Configuration GLBP :
+Configurez GLBP sur vos switches :
+Switch 1 :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.1.2 255.255.255.0
+glbp 1 ip 192.168.1.1
+glbp 1 priority 120
+glbp 1 preempt
+Switch 2 :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.1.3 255.255.255.0
+glbp 1 ip 192.168.1.1
+glbp 1 priority 100
+glbp 1 preempt
+Explications :
+glbp 1 ip 192.168.1.1 : Crée une passerelle virtuelle partagée.
+priority : Détermine quel routeur est le Active Virtual Gateway (AVG).
+Les deux switches deviennent des Active Virtual Forwarders (AVF) et se partagent le trafic.
+Vérifiez l’état de GLBP :
+bash
+Copier le code
+show glbp
+3. Load balancing au niveau des liens (EtherChannel avec LACP)
+Ajoutez un équilibrage au niveau des liens entre vos switches pour améliorer la performance et la redondance.
+
+Configurez des agrégations de liens sur chaque switch (par exemple, entre deux switches cœur et des switches d'accès) :
+bash
+Copier le code
+interface range g0/1 - 2
+channel-group 1 mode active
+Configurez le port-channel sur chaque switch :
+bash
+Copier le code
+interface port-channel 1
+switchport mode trunk
+Assurez-vous que les deux switches utilisent le même protocole pour le trunk (ex. dot1q).
+4. Load balancing au niveau de la passerelle et du trafic sortant
+Si vous utilisez un pare-feu ou un routeur en amont, vous pouvez configurer :
+
+PBR (Policy-Based Routing) : Dirige certains types de trafic vers différents liens en fonction de règles.
+ECMP (Equal-Cost Multi-Path) : Permet d’utiliser plusieurs chemins avec le même coût pour le routage.
+5. Scénario typique d’architecture avec redondance et load balancing
+Deux switches cœur configurés avec GLBP.
+Liens redondants entre les switches cœur et les switches d'accès, configurés avec LACP.
+Un routeur ou pare-feu en amont configuré avec ECMP pour partager la charge entre plusieurs chemins.
+6. Tester la configuration
+Simulez des pannes de liens ou de switches :
+Désactivez une interface pour vérifier le basculement.
+Capturez le trafic pour vérifier que le load balancing fonctionne correctement.
+Commandes utiles :
+GLBP :
+bash
+Copier le code
+show glbp brief
+EtherChannel :
+bash
+Copier le code
+show etherchannel summary
+Routage :
+bash
+Copier le code
+show ip route
+Cette configuration vous permettra d’assurer à la fois la redondance et l’équilibrage de charge sur votre réseau, tout en augmentant les performances globales et la résilience. Si vous avez besoin de détails supplémentaires pour votre infrastructure, n’hésitez pas !
+
+
+
+
+
+Vous avez dit :
+Alors j'avais déjà deux routeurs qui utilisaient le protocole GBLP, ça n'est pas grave si en plus de load balance deux switchs et comment je branche les switcs dans tout cela 
+ChatGPT a dit :
+
+Pas de problème si vous utilisez déjà GLBP sur vos routeurs pour l'équilibrage de charge des passerelles ! Les switches peuvent être intégrés pour redonder et répartir la charge de manière complémentaire. Voici comment brancher les switches et configurer l’ensemble :
+
+1. Architecture globale : Routeurs et switches redondants
+Votre architecture comportera :
+
+Deux routeurs configurés avec GLBP (équilibrage et redondance pour la passerelle).
+Deux switches configurés en redondance, utilisant LACP (EtherChannel) ou une autre technologie de lien agrégé.
+Les switches et routeurs seront connectés en redondance.
+2. Comment connecter les switches et routeurs
+Voici une topologie typique :
+
+Étapes de branchement :
+Liens entre les routeurs et les switches :
+
+Connectez chaque routeur à les deux switches via des liens agrégés (EtherChannel).
+Par exemple :
+Routeur 1 → Switch 1 (port 1) + Switch 2 (port 1).
+Routeur 2 → Switch 1 (port 2) + Switch 2 (port 2).
+Liens entre les switches :
+
+Connectez les deux switches ensemble via un trunk redondant :
+Utilisez deux ou plusieurs interfaces pour créer un port-channel.
+Liens entre switches et appareils d’accès :
+
+Connectez vos appareils (serveurs, stations de travail) aux deux switches pour garantir la continuité en cas de panne.
+3. Configuration des switches
+Voici une configuration de base pour les switches :
+
+a. Configurer EtherChannel entre les switches
+Configurez un lien redondant entre les switches :
+bash
+Copier le code
+interface range g0/1 - 2
+channel-group 1 mode active
+switchport mode trunk
+b. Configurer EtherChannel entre switches et routeurs
+Pour Switch 1 :
+bash
+Copier le code
+interface range g0/3 - 4
+channel-group 2 mode active
+switchport mode trunk
+Pour Switch 2 :
+bash
+Copier le code
+interface range g0/3 - 4
+channel-group 3 mode active
+switchport mode trunk
+4. Configurer les VLAN et Trunks
+Configurez les VLAN pour séparer les réseaux et acheminer le trafic efficacement :
+bash
+Copier le code
+vlan 10
+name DATA
+vlan 20
+name VOICE
+Activez les trunks entre routeurs et switches :
+bash
+Copier le code
+interface port-channel 2
+switchport mode trunk
+5. GLBP sur les routeurs
+Si vous avez déjà configuré GLBP sur vos routeurs, voici comment valider l’intégration avec les switches.
+
+Étapes pour valider :
+Assurez-vous que vos switches sont configurés pour utiliser la passerelle GLBP :
+Dans les VLAN (par exemple VLAN 10) :
+bash
+Copier le code
+interface vlan 10
+ip address 192.168.10.2 255.255.255.0
+Configurez les hôtes pour utiliser l’IP GLBP virtuelle comme passerelle :
+Exemple :
+192.168.10.1 est l’adresse GLBP sur les routeurs.
+Testez avec la commande :
+bash
+Copier le code
+show glbp
+6. Sécurité et redondance supplémentaire
+Spanning Tree Protocol (STP) : Activez le mode RSTP pour éviter les boucles réseau :
+bash
+Copier le code
+spanning-tree mode rapid-pvst
+HSRP/VRRP en complément (facultatif) : Si nécessaire, configurez une redondance supplémentaire au niveau des switches pour certains VLANs critiques.
+7. Test de la configuration
+Testez les basculements :
+Désactivez un lien entre un switch et un routeur.
+Vérifiez que le trafic bascule automatiquement.
+Commandes utiles :
+EtherChannel :
+bash
+Copier le code
+show etherchannel summary
+VLAN et Trunking :
+bash
+Copier le code
+show vlan brief
+show interfaces trunk
+Exemple de schéma logique :
+Routeurs : Routeur 1 et Routeur 2 sont configurés avec GLBP et connectés aux deux switches.
+Switches : Les deux switches sont connectés entre eux (trunk redondant) et aux routeurs via EtherChannel.
+Hôtes : Les serveurs et stations de travail sont connectés aux deux switches pour bénéficier de la redondance.
+Si vous suivez cette approche, vous obtiendrez une infrastructure résiliente, où les routeurs équilibrent la charge au niveau de la passerelle et les switches gèrent la redondance et le load balancing au niveau du réseau interne.

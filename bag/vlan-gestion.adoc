@@ -1,0 +1,55 @@
+Non, pas nécessairement. La VLAN de gestion d'un switch n'est pas automatiquement la même que la VLAN 10 ou toute autre VLAN que vous configurez. Cela dépend de la configuration que vous appliquez au switch.
+
+1. VLAN de gestion d’un switch
+La VLAN de gestion est la VLAN à laquelle l'interface de gestion du switch (souvent appelée interface SVI, Switch Virtual Interface) est associée. Cette VLAN permet d'accéder au switch pour la configuration et la gestion (via Telnet, SSH, HTTP, ou SNMP).
+
+Par défaut, la VLAN 1 est utilisée comme VLAN de gestion sur de nombreux switches.
+Vous pouvez cependant configurer une autre VLAN pour devenir la VLAN de gestion, comme la VLAN 10 dans votre cas.
+2. Configuration spécifique
+Pour que la VLAN 10 devienne la VLAN de gestion, vous devez :
+
+Attribuer une adresse IP à l'interface SVI de la VLAN 10.
+Configurer les ports du switch pour qu’ils appartiennent à la VLAN 10 (si les appareils connectés au switch doivent aussi être dans la VLAN 10).
+S'assurer que la VLAN 10 est active sur le switch.
+Exemple de configuration sur un switch Cisco :
+
+bash
+Copier le code
+! Création de la VLAN 10
+vlan 10
+ name Management
+
+! Activation de l'interface de gestion pour la VLAN 10
+interface Vlan10
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+
+! Configuration des ports pour la VLAN 10
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 10
+
+! Définir une passerelle par défaut pour l'accès distant (si nécessaire)
+ip default-gateway 192.168.10.254
+3. Vérifications
+Après la configuration :
+
+Assurez-vous que la VLAN 10 est bien active :
+
+bash
+Copier le code
+show vlan brief
+Vous devriez voir la VLAN 10 listée avec les ports correspondants.
+
+Vérifiez que l’interface VLAN 10 est opérationnelle :
+
+bash
+Copier le code
+show ip interface brief
+L’interface VLAN 10 doit être up avec l’adresse IP configurée.
+
+4. Points importants
+Si la VLAN 10 est configurée uniquement pour d'autres usages (par exemple pour des postes de travail ou des serveurs) et que vous n'avez pas défini explicitement l'interface SVI pour la gestion, la VLAN 10 ne sera pas utilisée comme VLAN de gestion.
+Si vous ne configurez pas une VLAN spécifique pour la gestion, la VLAN 1 reste la VLAN de gestion par défaut.
+Sur certains switches modernes, il est recommandé de ne pas utiliser la VLAN 1 pour des raisons de sécurité (puisqu’elle est activée par défaut et souvent cible d’attaques).
+En résumé, la VLAN de gestion n'est pas automatiquement la VLAN 10. Vous devez explicitement configurer la VLAN 10 pour qu'elle serve de VLAN de gestion.

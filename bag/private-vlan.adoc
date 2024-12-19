@@ -1,0 +1,173 @@
+= Empêcher une communication intra-VLAN
+
+
+== Introduction
+
+Pour empêcher les dispositifs d’un même VLAN de communiquer entre eux, vous pouvez utiliser une fonctionnalité appelée Private VLAN (PVLAN), ou une isolation des ports si votre équipement réseau la prend en charge. 
+
+=== ...
+
+Différentes méthodes pour mettre en place cette restriction :
+
+== 1. Utilisation des Private VLANs (PVLANs)
+
+Les PVLANs permettent de segmenter un VLAN en différents sous-groupes qui limitent la communication entre les dispositifs au sein du même VLAN. 
+
+
+=== Primary VLAN : 
+
+VLAN principal (par exemple, VLAN 40 dans votre cas).
+
+
+=== Isolated VLAN : 
+
+les dispositifs dans ce VLAN ne peuvent communiquer qu’avec le port de type promiscuous (souvent un routeur ou un serveur) mais pas entre eux.
+
+
+=== Promiscuous port : 
+
+permet la communication avec tous les dispositifs de tous les PVLANs.
+
+== Configuration d’un PVLAN sur un switch Cisco :
+
+[source, bash]
+----
+Switch(config)# vlan 40
+Switch(config-vlan)# private-vlan primary
+Switch(config-vlan)# private-vlan isolated
+Switch(config-vlan)# exit
+
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# switchport mode private-vlan host
+Switch(config-if)# switchport private-vlan host-association 40 isolated
+----
+
+
+Les commandes configurées ici mettent en place un Private VLAN (PVLAN) isolé pour le port FastEthernet 0/1 sur le switch, ce qui a les effets suivants sur le dispositif connecté à ce port :
+
+
+=== Création et configuration d'un VLAN isolé :
+
+* Le VLAN 40 est créé comme un Private VLAN et marqué comme isolé.
+
+=== ...
+
+Dans un Private VLAN, un VLAN primaire peut contenir plusieurs types de sous-VLANs : isolé et communauté.
+
+
+Le VLAN isolé empêche toute communication entre les ports membres du VLAN, sauf avec un port promiscuous (qui permet la connexion avec d'autres VLANs ou à des routeurs/gateways pour l'accès au réseau).
+
+
+=== Isolation du dispositif sur le port FastEthernet 0/1 :
+
+Le port FastEthernet 0/1 est configuré en mode private-vlan host, ce qui signifie qu'il fonctionne en tant qu'hôte d'un VLAN privé.
+
+=== ...
+
+En associant ce port au VLAN isolé (VLAN 40), le dispositif connecté à ce port ne pourra communiquer qu'avec les ports promiscuous configurés pour ce VLAN privé. 
+
+=== ...
+
+Il ne pourra pas communiquer directement avec les autres ports associés à ce VLAN isolé.
+
+
+=== Limitation de la communication :
+
+Le dispositif connecté au port FastEthernet 0/1 sera complètement isolé des autres dispositifs du même VLAN isolé, sauf pour ceux connectés via un port promiscuous. 
+
+=== ...
+
+Par exemple, il pourrait communiquer avec un routeur ou un pare-feu, mais pas avec les autres hôtes du VLAN isolé.
+
+
+=== En résumé :
+
+Le dispositif connecté au port FastEthernet 0/1 sera isolé des autres hôtes de son VLAN. 
+
+=== ...
+
+Ce type de configuration est souvent utilisé pour des environnements où des dispositifs doivent avoir un accès au réseau mais ne doivent pas pouvoir communiquer entre eux, comme dans un réseau d'hébergement sécurisé pour des clients distincts.
+
+
+
+
+
+
+
+
+== 2. Isolation de ports sur un switch (Port Isolation)
+
+Certains switchs permettent l’isolation de ports, une méthode simple qui empêche la communication entre les ports du même VLAN :
+
+Activer l’isolation sur les ports où les dispositifs sont connectés.
+Aucun trafic ne sera routé entre ces ports, même s’ils partagent le même VLAN.
+Exemple pour isoler des ports sur un switch Cisco (selon le modèle) :
+
+bash
+Copier le code
+Switch(config)# interface range fastethernet 0/1 - 0/10
+Switch(config-if-range)# switchport protected
+
+
+== 3. Utilisation des ACL (Access Control Lists)
+
+
+Vous pouvez également définir des règles ACL pour bloquer le trafic entre les adresses IP ou les sous-réseaux au sein du VLAN 40 :
+
+=== ...
+
+* Créez une ACL pour bloquer le trafic de l'adresse IP source vers l'adresse IP de destination (et vice-versa si nécessaire).
+
+* Appliquez cette ACL sur les interfaces du VLAN.
+
+=== Exemple de configuration d’ACL sur un switch Cisco :
+
+[source, bash]
+Switch(config)# access-list 101 deny ip 192.168.40.0 0.0.0.255 192.168.40.0 0.0.0.255
+Switch(config)# access-list 101 permit ip any any
+Switch(config)# interface vlan 40
+Switch(config-if)# ip access-group 101 in
+
+
+Ces méthodes permettent de restreindre efficacement la communication entre les dispositifs du même VLAN selon vos besoins.
+
+
+
+== Conventions de numérotation des ACLs Cisco
+Les numéros des listes d'accès indiquent généralement le type d'ACL que tu configures.
+
+
+=== ...
+
+Pour une ACL standard (qui filtre uniquement en fonction des adresses IP source), utilise les numéros de 1 à 99 ou de 1300 à 1999.
+
+
+=== ...
+
+
+Pour une ACL étendue (qui filtre en fonction des adresses IP source et destination, ainsi que des protocoles et des ports), utilise les numéros de 100 à 199 ou de 2000 à 2699.
+
+=== ...
+
+
+Dans ton exemple, access-list 101 est une ACL étendue. 
+
+
+=== ...
+
+Tu peux donc choisir tout numéro entre 100 et 199 ou 2000 et 2699 pour une ACL étendue.
+
+
+== Exemple avec un autre numéro
+
+Si tu veux utiliser, par exemple, le numéro 105, tu pourrais écrire :
+
+[source, bash]
+----
+Switch(config)# access-list 105 deny ip 192.168.40.0 0.0.0.255 192.168.40.0 0.0.0.255
+----
+
+Cela produira exactement le même effet que access-list 101, mais avec un numéro différent.
+
+
+

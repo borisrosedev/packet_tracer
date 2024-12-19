@@ -1,0 +1,91 @@
+= Mode Trunk 
+
+== Introduction
+
+Le mode trunk sur un switch Cisco permet à un port de transporter le trafic de plusieurs VLANs sur un seul lien physique. 
+
+=== ...
+
+Ce mode est généralement utilisé pour connecter des équipements réseau comme des switchs ou des routeurs, ...
+
+=== ...
+
+afin de permettre le passage de données provenant de plusieurs VLANs entre eux.
+
+
+== Mode Trunk
+
+=== Fonction : 
+
+Le mode trunk permet à un port de transporter des paquets de plusieurs VLANs. 
+
+=== ...
+
+Cela est essentiel lorsque vous avez plusieurs VLANs sur un réseau ...
+
+=== ...
+
+et que vous souhaitez qu'ils puissent traverser le même lien (câble) pour atteindre d'autres équipements réseau.
+
+
+=== Encapsulation : 
+
+Pour que le switch sache à quel VLAN appartient chaque paquet, une étiquette (ou tag) ...
+
+=== ...
+
+est ajoutée à chaque trame Ethernet pour indiquer son VLAN d'origine. 
+
+=== ...
+
+Le protocole utilisé pour cette étiquette est généralement IEEE 802.1Q (dot1Q).
+
+
+=== Exemple d'utilisation : 
+
+Imaginez un réseau avec trois VLANs (VLAN 10, VLAN 20, VLAN 30). 
+
+=== ...
+
+Si vous avez un switch et un routeur, et que vous voulez que tous ces VLANs communiquent via ...
+
+=== ...
+
+le routeur pour effectuer du routage inter-VLAN, vous configurez le port entre le switch et le routeur en mode trunk. 
+
+=== ...
+
+Ainsi, tous les paquets de VLAN 10, 20, et 30 peuvent traverser ce même lien trunk.
+
+=== Comparaison avec le Mode Access
+
+En mode access, un port n'accepte qu'un seul VLAN. 
+
+=== ...
+
+Il est généralement utilisé pour connecter des périphériques comme des ordinateurs ou des imprimantes, qui ne sont pas conscients de la notion de VLAN.
+
+=== ...
+
+En mode trunk, le port est capable de transporter le trafic de plusieurs VLANs, ...
+
+=== ...
+
+et il est souvent utilisé pour les connexions entre des équipements réseau comme les switchs ou les routeurs.
+
+=== Configuration
+
+
+Pour configurer un port en mode trunk sur un switch Cisco, vous pouvez utiliser les commandes suivantes :
+
+=== ...
+
+[source, txt]
+----
+interface FastEthernet0/1
+  switchport mode trunk
+  switchport trunk encapsulation dot1q
+----
+
+
+Cela permet de transporter le trafic de plusieurs VLANs via ce port.

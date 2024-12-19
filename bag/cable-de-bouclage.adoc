@@ -1,0 +1,50 @@
+= Un câble de bouclage (loopback)
+
+
+== Introduction
+
+Un câble de bouclage (loopback) est un outil de diagnostic réseau conçu ...
+
+=== ...
+
+pour tester la connectivité d'un port réseau ou d'une carte réseau sans nécessiter d'autre appareil. 
+
+=== ...
+
+Il fonctionne en réacheminant le signal émis par le port vers lui-même, 
+
+=== ...
+
+ce qui permet à l'appareil de vérifier s'il peut envoyer et recevoir des données correctement.
+
+
+== Exemple d’utilisation :
+
+=== Test de ports réseau : 
+
+Pour tester un port Ethernet d'un switch ou d'un routeur, on insère le câble de bouclage dans le port. 
+
+=== ...
+
+Si le port fonctionne bien, il détecte les signaux envoyés et les reçoit en retour, indiquant que le port est opérationnel.
+
+
+===  Diagnostic de cartes réseau : 
+
+Sur un ordinateur, on peut insérer le câble de bouclage dans la prise Ethernet pour vérifier si la carte réseau peut envoyer ...
+
+
+=== ...
+
+et recevoir des données, détectant ainsi d'éventuels dysfonctionnements.
+
+
+=== ...
+
+Ce câble est souvent utilisé par les techniciens pour des tests rapides, sans nécessiter de configuration ou d'autres équipements réseau.
+
+
+
+
+
+

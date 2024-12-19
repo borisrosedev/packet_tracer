@@ -1,0 +1,151 @@
+= Importer et exporter des fichiers de configuration
+
+== Introduction
+
+Dans Cisco Packet Tracer, vous pouvez importer et exporter des fichiers de configuration pour les dispositifs, ...
+
+=== ...
+
+ce qui est très utile pour sauvegarder des configurations ou pour les appliquer rapidement à d'autres équipements. 
+
+=== ...
+
+Voici les étapes pour importer et exporter des fichiers de configuration, ainsi que quelques conseils pour la syntaxe.
+
+
+== 1. Exporter la configuration d'un dispositif
+
+Pour sauvegarder la configuration actuelle d'un routeur, d'un switch ou de tout autre dispositif compatible :
+
+* Ouvrir la CLI du dispositif dans Packet Tracer.
+
+=== ...
+
+* Affichez la configuration en utilisant la commande show running-config pour vérifier que tout est correct.
+
+=== ...
+
+* Copier la configuration en la sélectionnant et en la copiant manuellement depuis la fenêtre CLI de Packet Tracer.
+
+=== ...
+
+Il n’y a pas de commande pour directement exporter dans Packet Tracer, donc vous pouvez copier ...
+
+=== ...
+
+
+manuellement le texte et le coller dans un éditeur de texte (comme Notepad) pour l’enregistrer en tant que fichier .txt ou .cfg.
+
+=== ...
+
+* Sauvegardez le fichier sur votre ordinateur sous le nom de votre choix.
+
+
+== 2. Importer une configuration dans un dispositif
+
+Pour importer une configuration sauvegardée dans Packet Tracer :
+
+Accédez à la CLI du dispositif (routeur ou switch).
+
+Copiez la configuration depuis votre fichier texte : Ouvrez le fichier texte dans un éditeur comme Notepad, sélectionnez tout le texte, et copiez-le.
+
+=== ...
+
+Collez la configuration dans la CLI du dispositif de Packet Tracer.
+
+Pour coller dans la CLI de Packet Tracer, vous pouvez généralement cliquer droit et choisir "Coller", ou utiliser le raccourci clavier (Ctrl + V sur Windows).
+
+=== Appliquer la configuration : 
+
+
+Si votre configuration contient des commandes configure terminal, elle entrera automatiquement en mode de configuration. 
+
+=== ...
+
+Assurez-vous que les commandes sont bien appliquées et qu'il n'y a pas d'erreurs.
+
+
+== Syntaxe des commandes de configuration
+
+Voici quelques conseils concernant la syntaxe des fichiers de configuration importés/exportés :
+
+
+=== Format standard des fichiers de configuration Cisco : 
+
+Une configuration typique commence par entrer en mode de configuration globale (configure terminal) ...
+
+=== ...
+
+puis inclut des blocs de configuration pour les interfaces, VLANs, ACLs, etc.
+
+Exemple de fichier de configuration :
+
+[source, bash]
+----
+enable
+configure terminal
+hostname MonRouteur
+interface g0/0
+  ip address 192.168.1.1 255.255.255.0
+  no shutdown
+exit
+ip route 0.0.0.0 0.0.0.0 192.168.1.254
+----
+
+
+
+=== Vérifiez les lignes de commande : 
+
+
+Lorsque vous importez une configuration, vérifiez qu’il n’y a pas d’incompatibilités (par exemple, des noms d'interfaces qui diffèrent entre les dispositifs). 
+
+
+=== ...
+
+Packet Tracer pourrait ignorer les commandes qui ne sont pas applicables.
+
+
+=== Configuration en mode global : 
+
+Assurez-vous que toutes les commandes de configuration sont sous le bon mode (par exemple, interface, vlan, router, etc.). 
+
+=== ...
+
+Si vous copiez des commandes de configuration, Packet Tracer appliquera la configuration ligne par ligne.
+
+
+
+=== ...
+
+L'extension des fichiers de configuration dans Cisco Packet Tracer est généralement .txt ou .cfg. 
+
+
+Il n'y a pas de format exclusif pour Cisco Packet Tracer, donc vous pouvez utiliser :
+
+=== .txt : 
+
+Commun et facilement ouvert par les éditeurs de texte standard. Pratique pour lire et modifier le fichier en dehors de Packet Tracer.
+
+
+
+=== .cfg : 
+
+Format souvent utilisé pour les fichiers de configuration Cisco, et plus conventionnel pour les configurations réseau.
+
+== Exemples
+
+=== NomFichier.txt : 
+
+Utilisé pour sauvegarder une configuration en texte brut.
+
+=== NomFichier.cfg : 
+
+Souvent utilisé pour distinguer un fichier de configuration réseau.
+
+=== ...
+
+L'extension n'a pas d'impact direct sur l'importation dans Packet Tracer, car il s'agit d'un simple copier-coller du contenu du fichier dans la CLI. 
+
+=== ...
+
+Cependant, en utilisant .cfg, vous facilitez l’identification du fichier comme une configuration réseau.

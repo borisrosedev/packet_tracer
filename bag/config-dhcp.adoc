@@ -1,0 +1,246 @@
+= Configuration d'un serveur DHCP
+
+
+== Introduction
+
+Pour configurer un serveur DHCP qui distribue automatiquement des adresses IP et un serveur DNS ...
+
+=== ...
+
+pour la résolution de noms dans Cisco Packet Tracer, suivez les étapes ci-dessous.
+
+
+== Création de la Topologie Réseau
+
+Ajoutez un serveur dans votre topologie (il sera configuré pour servir à la fois de serveur DHCP et de serveur DNS).
+
+=== ...
+
+Ajoutez un routeur pour permettre la connectivité entre le réseau local et d'autres réseaux si nécessaire.
+
+=== ...
+
+Ajoutez un switch pour connecter plusieurs hôtes (PCs) au serveur.
+
+=== ...
+
+Ajoutez des PCs qui recevront des adresses IP du serveur DHCP.
+
+=== ...
+
+Connectez les PCs, le serveur et le routeur au switch.
+
+
+== Configurer le Routeur
+
+Le routeur servira de passerelle par défaut pour le réseau, et il doit avoir une adresse IP statique configurée. 
+
+=== ...
+
+Vous pouvez également configurer la passerelle sur le serveur DHCP.
+
+=== Étapes pour configurer l'interface LAN du routeur :
+
+Sélectionnez le routeur dans Packet Tracer et accédez à la CLI.
+
+=== ...
+
+Entrez les commandes suivantes pour configurer l'interface du routeur :
+
+[source, bash]
+----
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+----
+
+=== ...
+
+Cela configure l'interface du routeur avec l'adresse IP 192.168.1.1, qui sera la passerelle par défaut pour les hôtes sur ce réseau.
+
+
+=== Configurer le Serveur DHCP
+
+Étapes pour configurer le serveur DHCP dans Cisco Packet Tracer :
+Sélectionnez le serveur dans Cisco Packet Tracer.
+
+=== ...
+
+Accédez à l'onglet Config, puis à la section DHCP.
+
+
+=== ...
+
+Activez le service DHCP en choisissant On.
+
+
+=== ...
+
+Configurez les paramètres DHCP comme suit :
+
+=== ...
+
+Default Gateway : 192.168.1.1 (adresse IP du routeur)
+
+=== ...
+
+DNS Server : 192.168.1.254 (adresse IP du serveur DNS que nous allons configurer)
+
+=== ...
+
+Start IP Address : 192.168.1.10 (première adresse IP attribuée par le DHCP)
+
+=== ...
+
+Subnet Mask : 255.255.255.0 (masque de sous-réseau)
+
+=== ...
+
+Max Number of Users : Le nombre maximum de clients (par exemple, 50)
+
+=== ...
+
+Enregistrez les paramètres. 
+
+=== ...
+
+Le serveur DHCP est maintenant prêt à distribuer des adresses IP aux hôtes qui en feront la demande.
+
+
+== Configurer le Serveur DNS
+
+Étapes pour configurer le serveur DNS :
+
+=== ...
+
+Toujours dans le serveur sélectionné, accédez à l'onglet Config, puis à la section DNS.
+
+=== ...
+
+Activez le service DNS en choisissant On.
+
+=== ...
+
+Ajoutez des entrées DNS pour la résolution de noms :
+
+=== ...
+
+Domain Name : www.example.com
+
+=== ...
+
+Address : 192.168.1.100 (l'adresse IP du serveur Web, par exemple)
+
+=== ...
+
+Cliquez sur Add pour ajouter cette entrée DNS.
+
+=== ...
+
+Vous pouvez ajouter plusieurs noms de domaine avec leurs adresses IP respectives.
+
+
+== Configurer les PCs pour Utiliser le Serveur DHCP
+
+Sélectionnez l'un des PCs.
+
+=== ...
+
+Accédez à l'onglet Desktop, puis à IP Configuration.
+
+=== ...
+
+Cochez l'option DHCP. 
+
+=== ...
+
+Cela permet au PC d'obtenir automatiquement une adresse IP du serveur DHCP.
+
+=== ...
+
+Le PC recevra une adresse IP, un masque de sous-réseau, une passerelle par défaut, et l'adresse IP du serveur DNS.
+
+== Test de la Configuration DHCP et DNS
+
+=== Vérification du DHCP :
+
+Sur chaque PC, accédez à l'onglet Desktop puis à Command Prompt.
+
+=== ...
+
+Tapez la commande ipconfig pour vérifier que l'adresse IP et les paramètres réseau ont été correctement attribués par le serveur DHCP.
+
+[source, bash]
+----
+ipconfig
+----
+
+=== ...
+
+Vous devriez voir une adresse IP du réseau 192.168.1.x, la passerelle 192.168.1.1, et le serveur DNS 192.168.1.254.
+
+=== Vérification du DNS :
+
+Toujours sur le PC, dans le Command Prompt, tapez la commande suivante pour tester la résolution DNS :
+
+[source, bash]
+----
+ping www.example.com
+----
+
+=== ...
+
+Le nom de domaine www.example.com devrait être résolu en l'adresse IP 192.168.1.100 (ou une autre adresse que vous avez configurée).
+
+
+== Vérification Complète de la Configuration
+
+=== Vérifier les adresses IP : 
+
+Sur chaque PC, utilisez ipconfig pour vérifier que l'adresse IP, le masque de sous-réseau, ...
+
+=== ...
+
+la passerelle et le serveur DNS sont bien attribués par le serveur DHCP.
+
+=== Tester la résolution DNS : 
+
+Pinguez le nom de domaine configuré sur le serveur DNS à partir de chaque PC pour vérifier que la résolution DNS fonctionne.
+
+== Résumé des Commandes Importantes
+
+Configurer une interface sur le routeur :
+
+[source, bash]
+----
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+----
+
+=== ...
+
+Configurer un serveur DHCP dans Cisco Packet Tracer :
+
+Accédez à l'onglet Config, puis à DHCP.
+
+=== ...
+
+Activez le service DHCP et définissez la passerelle, le DNS, l'adresse IP de début, etc.
+
+=== ...
+
+Configurer un serveur DNS dans Cisco Packet Tracer :
+
+Accédez à l'onglet Config, puis à DNS.
+
+=== ...
+
+Activez le service DNS et ajoutez des noms de domaine avec leurs adresses IP correspondantes.
+
+
+
+

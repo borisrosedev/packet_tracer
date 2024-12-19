@@ -1,0 +1,134 @@
+= Communication entre VLANs sur Packet Tracer
+:revealjs_theme: league
+:source-highlighter: highlight.js
+:icons: font
+
+== Option 1 : Utiliser un Router-on-a-Stick
+
+
+Le "Router-on-a-Stick" est une solution classique pour permettre la communication entre les VLANs ...
+
+=== ...
+
+en utilisant un seul routeur et une interface réseau.
+
+
+=== Étapes pour configurer le "Router-on-a-Stick" :
+
+Configurer les VLANs sur le switch : Vous devez d'abord créer vos VLANs sur le switch 2960 et attribuer des ports à ces VLANs.
+
+
+=== Par exemple :
+
+[source,bash]
+----
+Switch> enable
+Switch# configure terminal
+Switch(config)# vlan 10
+Switch(config-vlan)# name VLAN_10
+Switch(config-vlan)# exit
+Switch(config)# vlan 20
+Switch(config-vlan)# name VLAN_20
+Switch(config-vlan)# exit
+----
+
+
+=== Attribuer des ports aux VLANs : 
+
+Par exemple, pour mettre un port dans le VLAN 10 :
+
+[source, bash]
+----
+Switch(config)# interface fastEthernet 0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+----
+
+
+Faites la même chose pour les autres VLANs.
+
+=== Configurer le trunk entre le switch et le routeur : 
+
+
+Configurez une interface sur le switch en tant que trunk pour qu'elle transporte le trafic de plusieurs VLANs vers le routeur.
+
+Exemple de configuration du trunk sur le port qui relie le switch au routeur :
+
+[source, bash]
+----
+Switch(config)# interface fastEthernet 0/24
+Switch(config-if)# switchport mode trunk
+----
+
+
+=== Configurer le routeur : 
+
+Sur le routeur, vous configurez des sous-interfaces pour chaque VLAN. 
+
+=== ...
+
+Ces sous-interfaces permettent au routeur de gérer le trafic entre les VLANs.
+
+
+=== ...
+
+Exemple de configuration pour deux VLANs (VLAN 10 et VLAN 20) sur l'interface GigabitEthernet 0/0 du routeur :
+
+[source, bash]
+----
+Router> enable
+Router# configure terminal
+Router(config)# interface gigabitEthernet 0/0.10
+Router(config-subif)# encapsulation dot1Q 10
+Router(config-subif)# ip address 192.168.10.1 255.255.255.0
+Router(config-subif)# exit
+Router(config)# interface gigabitEthernet 0/0.20
+Router(config-subif)# encapsulation dot1Q 20
+Router(config-subif)# ip address 192.168.20.1 255.255.255.0
+Router(config-subif)# exit
+----
+
+
+=== ...
+
+gigabitEthernet 0/0.10 : Sous-interface pour le VLAN 10.
+
+=== ...
+
+encapsulation dot1Q 10 : Indique au routeur que cette sous-interface est associée au VLAN 10.
+
+=== ...
+
+ip address : Donnez une adresse IP pour chaque sous-réseau/VLAN.
+
+=== ...
+
+Vérifier la configuration : Une fois la configuration terminée, les appareils des différents VLANs pourront communiquer entre eux via le routeur. 
+
+=== ...
+
+Assurez-vous que les appareils des VLANs utilisent les bonnes passerelles par défaut, ...
+
+=== ...
+
+qui seront les adresses IP du routeur configurées sur les sous-interfaces.
+
+=== ...
+
+Par exemple, pour un appareil dans le VLAN 10, la passerelle par défaut sera 192.168.10.1, et pour le VLAN 20, ce sera 192.168.20.1.
+
+=== Option 2 : 
+
+Utiliser un Switch Multilayer (comme un 3650 ou un 3560)
+
+=== ...
+
+Si vous avez accès à un switch de niveau 3 dans Packet Tracer, comme un Cisco 3650 ou un Cisco 3560, ...
+
+=== ...
+
+vous pouvez faire le routage inter-VLAN directement sur le switch, sans avoir besoin d'un routeur externe.
+
+=== ...
+
+Dans ce cas, vous configurez simplement des interfaces VLAN sur le switch pour chaque VLAN et activez le routage IP avec la commande ip routing.

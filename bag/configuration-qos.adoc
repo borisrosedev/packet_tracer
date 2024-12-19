@@ -1,0 +1,102 @@
+
+
+
+=== Pour configurer des paramètres de QoS sur un switch :
+
+[source, bash]
+----
+Switch(config)# mls qos
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# mls qos trust dscp
+Switch(config-if)# exit
+----
+
+
+Oui, en activant la QoS avec ces commandes, le switch Cisco saura comment traiter les trames en fonction des valeurs DSCP (Differentiated Services Code Point) présentes dans les paquets.
+
+Détails de la configuration
+
+=== mls qos : 
+
+Cette commande active la fonctionnalité QoS sur le switch au niveau global. 
+
+=== ...
+
+Sans cette commande, les autres paramètres de QoS ne seront pas appliqués, même si vous les configurez sur des interfaces spécifiques.
+
+=== mls qos trust dscp sur une interface : 
+
+Cette commande indique au switch de faire confiance aux valeurs DSCP dans les paquets reçus sur cette interface. 
+
+=== ...
+
+Le switch utilisera ensuite ces valeurs pour prioriser les trames en fonction de leurs exigences de service (ex. faible latence pour la voix, haute priorité pour les données critiques).
+
+
+=== Ce que fait le switch avec ces paramètres
+En configurant mls qos trust dscp, le switch :
+
+Identifie les trames en fonction de leurs valeurs DSCP.
+
+=== ...
+
+Priorise les trames en fonction de ces valeurs pour leur donner le niveau de service approprié (ex. voix sur IP, vidéo en temps réel).
+
+
+=== ...
+
+Répartit la bande passante de manière plus efficace, notamment en cas de congestion sur le réseau.
+
+=== ...
+
+Par défaut, lorsque QoS est activé mais sans mls qos trust, le switch peut ne pas faire confiance aux valeurs DSCP et pourrait remplacer les valeurs DSCP ou CoS (Class of Service) selon ses propres règles.
+
+
+== Configuration QoS avancée
+
+
+Si votre réseau a des exigences spécifiques (par exemple, pour la VoIP ou les vidéos), ...
+
+
+=== ...
+
+il est possible de configurer des politiques QoS avancées qui appliquent des restrictions supplémentaires ou modifient les valeurs DSCP des paquets.
+
+
+=== ...
+
+Les valeurs DSCP (Differentiated Services Code Point) sont des champs dans l'en-tête IP qui permettent de classer et de prioriser les paquets dans un réseau IP en fonction de la qualité de service (QoS) qu’ils nécessitent. DSCP utilise un champ de 6 bits dans l'en-tête IP pour indiquer la priorité des paquets, offrant ainsi jusqu'à 64 classes de service différentes.
+
+Voici quelques valeurs DSCP courantes et leur signification :
+
+46 (EF - Expedited Forwarding) : Priorité élevée, souvent utilisée pour la voix (VoIP), qui nécessite une latence et une perte de paquets minimales.
+34 (AF41 - Assured Forwarding) : Haute priorité pour les applications vidéo en streaming.
+24 (CS3 - Class Selector) : Priorité pour les applications de signalisation (comme les contrôles de VoIP).
+0 (BE - Best Effort) : Classe par défaut, sans priorité spécifique.
+Fonctionnement des valeurs DSCP avec la QoS
+Classification : Avec mls qos trust dscp, le switch fait confiance aux valeurs DSCP des paquets entrants, sans les modifier. Les paquets sont ensuite classifiés en fonction de ces valeurs, ce qui aide le switch à comprendre le niveau de priorité à accorder à chaque paquet.
+
+Marquage (Marking) : Si le switch n'a pas la commande mls qos trust dscp ou si une politique spécifique est configurée, il peut ignorer ou modifier la valeur DSCP pour se conformer aux règles internes du réseau.
+
+Mise en file d'attente et priorisation : Le switch place les paquets dans des files d'attente différentes en fonction de leur valeur DSCP. Les files d'attente avec des valeurs DSCP plus élevées seront traitées en priorité. Par exemple, un paquet marqué avec la valeur 46 (EF) pour la voix sera traité plus rapidement qu'un paquet marqué 0 (Best Effort).
+
+Exemple d'utilisation des valeurs DSCP
+Si vous configurez mls qos trust dscp sur l'interface où un téléphone VoIP est connecté, les paquets VoIP (marqués avec DSCP 46) seront automatiquement priorisés, assurant ainsi une qualité audio élevée en minimisant la latence et les pertes.
+
+Exemple de configuration avancée avec une politique DSCP
+Pour adapter davantage la QoS en fonction des besoins de votre réseau, vous pouvez créer une politique QoS pour réécrire les valeurs DSCP ou spécifier la gestion de la file d'attente :
+
+plaintext
+Copier le code
+Switch(config)# class-map match-all VoIP-Traffic
+Switch(config-cmap)# match dscp ef
+Switch(config-cmap)# exit
+Switch(config)# policy-map Priority-Voice
+Switch(config-pmap)# class VoIP-Traffic
+Switch(config-pmap-c)# priority level 1
+Switch(config-pmap)# exit
+Switch(config)# interface fastethernet 0/1
+Switch(config-if)# service-policy input Priority-Voice
+Dans cet exemple, le switch identifie les paquets de VoIP en fonction de leur valeur DSCP (EF) et leur accorde une priorité maximale.
+
+En résumé, les valeurs DSCP jouent un rôle essentiel dans la gestion de la qualité de service en indiquant aux switches et routeurs comment prioriser le trafic.

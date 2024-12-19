@@ -1,0 +1,58 @@
+= Syslog et SNMP
+
+La raison pour laquelle les adresses IP du serveur Syslog et du serveur SNMP sont différentes réside dans leurs rôles distincts et leur gestion au sein du réseau. Voici une explication détaillée :
+
+
+=== Serveur Syslog (192.168.20.100) :
+
+Le serveur Syslog est utilisé pour collecter et stocker les journaux d'événements générés par les équipements réseau (comme les switches et routeurs).
+
+=== ...
+
+
+Cela inclut les logs sur les erreurs, les avertissements, les modifications de configuration, etc.
+
+=== ...
+
+Le Syslog centralise ces informations pour permettre une analyse et un dépannage rapides.
+
+=== Serveur SNMP (192.168.20.101) :
+
+Le serveur SNMP est utilisé pour la gestion et la supervision des équipements réseau.
+
+=== ...
+
+
+SNMP permet de récupérer des informations sur l'état et les performances des équipements, d'envoyer des alertes (traps), et éventuellement de configurer à distance certains paramètres des dispositifs.
+
+=== ...
+
+Le protocole SNMP nécessite un hôte distinct pour recevoir les données (via une communauté comme public dans l'exemple).
+
+== Pourquoi des IP différentes ?
+
+=== Séparation des services : 
+
+Les deux services ont des fonctions différentes et peuvent être hébergés sur des serveurs distincts pour éviter tout conflit ou surcharge.
+
+=== Meilleure organisation : 
+
+Cela permet de segmenter les responsabilités. Un serveur peut être spécialisé dans la gestion des logs, tandis qu'un autre s'occupe de la supervision.
+
+=== Résilience et disponibilité : 
+
+Si un des serveurs tombe en panne, l'autre peut continuer à fonctionner.
+
+=== Sécurité : 
+
+Les configurations et les autorisations peuvent être différentes pour chaque service.
+
+=== ...
+
+Cependant, si vous souhaitez utiliser une seule machine pour héberger les deux services, vous pouvez attribuer la même IP aux deux configurations. Par exemple :
+
+bash
+Copier le code
+Switch(config)# logging host 192.168.20.100
+Switch(config)# snmp-server host 192.168.20.100
+Cela fonctionne si la machine est configurée pour accepter et gérer les deux types de requêtes (Syslog et SNMP).

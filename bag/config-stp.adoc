@@ -1,0 +1,84 @@
+Pour configurer le Spanning Tree Protocol (STP) dans Cisco Packet Tracer et éviter les boucles réseau dans une topologie avec plusieurs switchs redondants, suivez ces étapes :
+
+1. Création de la Topologie avec des Switchs Redondants
+Ajoutez au moins 3 switchs dans Cisco Packet Tracer et connectez-les de manière redondante avec plusieurs liens entre eux.
+Connectez plusieurs ordinateurs aux switchs pour simuler un réseau utilisateur.
+2. Accéder aux Switchs et Configurer STP
+Accédez à chaque switch en cliquant dessus, puis ouvrez la console CLI (ligne de commande).
+Entrez en mode de configuration globale avec la commande :
+bash
+Copier le code
+enable
+configure terminal
+3. Activer STP sur les VLANs
+Activez le Spanning Tree Protocol pour un VLAN spécifique (généralement le VLAN par défaut 1). Si vous avez plusieurs VLANs, vous pouvez spécifier lequel utiliser avec STP.
+Tapez la commande suivante pour activer STP pour un VLAN :
+bash
+Copier le code
+spanning-tree vlan 1
+4. Configurer un Switch comme Root Bridge (Priorité)
+Il est recommandé de définir manuellement un switch comme root bridge pour éviter qu'il soit choisi dynamiquement.
+Sur le switch que vous voulez comme root bridge, entrez la commande suivante :
+bash
+Copier le code
+spanning-tree vlan 1 root primary
+Cela force le switch à devenir le root bridge pour le VLAN 1.
+5. Configurer les Priorités de STP pour les Autres Switchs
+Pour ajuster les priorités des autres switchs, utilisez la commande suivante sur chaque switch, en abaissant ou augmentant la priorité pour influencer l'élection du root bridge :
+
+bash
+Copier le code
+spanning-tree vlan 1 priority 32768
+Un chiffre plus bas signifie une plus grande priorité. Le root bridge a la priorité la plus basse. La priorité par défaut est 32768, vous pouvez la réduire sur le switch root.
+
+6. Vérifier l'État de STP
+Utilisez la commande suivante pour vérifier que STP fonctionne correctement et qu'il n'y a pas de boucles réseau :
+bash
+Copier le code
+show spanning-tree
+Cette commande affichera l'état de chaque port du switch (bloked, listening, learning, forwarding) et confirmera quel switch est le root bridge.
+7. Simuler une Redondance
+Ajoutez des liens supplémentaires entre vos switchs pour voir STP en action. STP bloquera certains ports pour empêcher les boucles réseau, ce qui garantira qu'il n'y a qu'un seul chemin actif entre deux points dans le réseau.
+Vous pouvez aussi débrancher certains liens physiques dans Packet Tracer et observer comment STP réagit pour réactiver un port bloqué si nécessaire.
+8. Configurer Rapid STP (RSTP) pour une Convergence Plus Rapide
+Pour des topologies nécessitant une convergence plus rapide, vous pouvez utiliser RSTP (Rapid Spanning Tree Protocol) à la place du STP classique.
+Sur chaque switch, utilisez la commande suivante :
+bash
+Copier le code
+spanning-tree mode rapid-pvst
+9. Sauvegarder la Configuration
+N’oubliez pas de sauvegarder la configuration sur chaque switch pour éviter de perdre les réglages après un redémarrage :
+bash
+Copier le code
+write memory
+Résumé des Commandes :
+Entrer en mode configuration globale :
+
+bash
+Copier le code
+enable
+configure terminal
+Activer STP pour un VLAN :
+
+bash
+Copier le code
+spanning-tree vlan 1
+Définir un switch comme root bridge :
+
+bash
+Copier le code
+spanning-tree vlan 1 root primary
+Vérifier l'état de STP :
+
+bash
+Copier le code
+show spanning-tree
+En suivant cette procédure, vous serez en mesure de configurer STP dans votre topologie redondante pour éviter les boucles réseau et assurer un fonctionnement stable du réseau.
+
+
+
+
+
+
+
+

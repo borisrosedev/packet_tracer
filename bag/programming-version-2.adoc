@@ -1,0 +1,213 @@
+Pour bien utiliser l'onglet "Programming" dans Cisco Packet Tracer, il est utile de comprendre les bases de la programmation, de connaître la structure de Packet Tracer, et d’avoir des exemples pratiques pour interagir avec les différents composants réseau. Voici un cours structuré en plusieurs étapes pour apprendre à maîtriser l'onglet "Programming".
+
+Objectifs du Cours
+Comprendre les fonctionnalités de l'onglet "Programming" dans Packet Tracer.
+Découvrir comment utiliser des scripts pour automatiser des configurations.
+Manipuler des dispositifs IoT via la programmation.
+Apprendre à gérer les erreurs et tester les scripts dans un réseau simulé.
+1. Introduction à l’Onglet "Programming"
+L'onglet "Programming" de Packet Tracer permet d'écrire du code pour interagir avec les appareils de la topologie réseau. Ce code est souvent en JavaScript, et Packet Tracer utilise cet environnement pour gérer des scénarios dynamiques ou des appareils IoT. Le "Programming" est surtout disponible sur les PCs et certains appareils IoT, mais pas directement sur les routeurs et switchs.
+
+Applications possibles :
+
+Automatiser des tâches de configuration.
+Interagir avec des objets IoT (capteurs, actionneurs).
+Créer des scénarios d'apprentissage pour vérifier les configurations.
+Simuler des pannes ou des modifications de topologie.
+2. Les Bases de JavaScript dans Packet Tracer
+Avant de commencer, voici quelques concepts de base en JavaScript, qui est le langage utilisé dans l'onglet "Programming" :
+
+Variables : Stockent des informations, par exemple var temperature = 25;.
+Conditions : Permettent de contrôler le flux du programme (if / else).
+Boucles : Permettent d'exécuter du code plusieurs fois, par exemple for (var i = 0; i < 10; i++).
+Fonctions : Blocs de code réutilisables, par exemple function updateTemperature() { … }.
+3. Création d’un Script Simple pour un Appareil IoT
+Dans Packet Tracer, vous pouvez programmer des appareils IoT comme des capteurs et des actionneurs. Voici un exemple pour un capteur de mouvement et une lumière.
+
+Exemple : Allumer une lumière avec un capteur de mouvement
+Créer une Topologie :
+
+Ajoutez un Motion Sensor (capteur de mouvement) et une Smart Light (lumière intelligente).
+Connectez les deux appareils dans le même réseau.
+Écrire le Script :
+
+Cliquez sur le capteur de mouvement, puis allez dans l'onglet Programming.
+
+Sélectionnez JavaScript comme langage et écrivez le code suivant :
+
+javascript
+Copier le code
+// Récupérer la lumière intelligente
+var light = findDeviceByName("Smart Light");
+
+// Fonction déclenchée lors de la détection de mouvement
+function onDetect() {
+    light.turnOn();
+}
+
+// Fonction déclenchée lorsque le mouvement cesse
+function onClear() {
+    light.turnOff();
+}
+
+// Lier les fonctions au capteur de mouvement
+this.onDetect = onDetect;
+this.onClear = onClear;
+Ce code allume la lumière lorsqu'un mouvement est détecté et l'éteint quand il n'y a plus de mouvement.
+
+Tester le Script :
+
+Lancez la simulation et provoquez un mouvement. La lumière doit s’allumer automatiquement.
+4. Automatisation des Configurations Réseau depuis un PC
+Il est possible d’utiliser le "Programming" pour automatiser la configuration d'un routeur via Telnet.
+
+Exemple : Script pour configurer une adresse IP sur un routeur via Telnet
+Configurer le Routeur pour l’accès Telnet :
+
+Sur le routeur, configurez Telnet en CLI avec les commandes suivantes :
+
+plaintext
+Copier le code
+Router> enable
+Router# configure terminal
+Router(config)# username admin privilege 15 password cisco
+Router(config)# line vty 0 4
+Router(config-line)# login local
+Router(config-line)# transport input telnet
+Écrire le Script pour le PC :
+
+Allez dans Programming sur le PC et entrez le code suivant pour vous connecter au routeur et configurer une interface.
+
+javascript
+Copier le code
+var telnet = new Telnet();
+telnet.open("192.168.1.1", 23);
+
+// Connexion avec utilisateur et mot de passe
+telnet.send("admin\n");
+telnet.send("cisco\n");
+
+// Configurer l’interface du routeur
+telnet.send("enable\n");
+telnet.send("configure terminal\n");
+telnet.send("interface GigabitEthernet0/0\n");
+telnet.send("ip address 192.168.1.1 255.255.255.0\n");
+telnet.send("no shutdown\n");
+telnet.send("exit\n");
+telnet.send("end\n");
+telnet.close();
+Ce script configure l’interface GigabitEthernet0/0 avec une adresse IP.
+
+Exécuter le Script :
+
+Exécutez le script et vérifiez sur le routeur que l’adresse IP a bien été configurée.
+5. Gestion des Erreurs et Débogage
+Pour un bon usage de "Programming", il est crucial de gérer les erreurs pour s'assurer que le script fonctionne correctement. Vous pouvez utiliser try/catch pour capturer et afficher les erreurs.
+
+Exemple : Gestion d’Erreurs dans un Script
+javascript
+Copier le code
+try {
+    var router = findDeviceByName("Router1");
+    router.cli.setCliText("enable");
+    router.cli.setCliText("configure terminal");
+} catch (error) {
+    console.log("Erreur lors de la configuration : " + error.message);
+}
+Ce code tente de configurer le routeur et affiche un message d'erreur si une étape échoue.
+
+6. Création de Scénarios Interactifs d'Apprentissage
+Les instructeurs peuvent créer des scripts qui vérifient si les configurations sont correctes et fournissent des indications. Cela permet aux étudiants de tester leurs connaissances en recevant des commentaires immédiats.
+
+Exemple : Vérification de la Configuration d'un VLAN
+javascript
+Copier le code
+function checkVlanConfig() {
+    var switch1 = findDeviceByName("Switch1");
+    if (switch1 && switch1.cli.getCliText().includes("VLAN 10")) {
+        alert("Bravo ! Le VLAN 10 a été configuré.");
+    } else {
+        alert("Erreur : VLAN 10 non configuré.");
+    }
+}
+
+checkVlanConfig();
+Ce script vérifie si le VLAN 10 a été configuré sur le switch et affiche un message en conséquence.
+
+7. Résumé et Applications Avancées
+Grâce à ces étapes, vous pouvez utiliser l’onglet "Programming" dans Packet Tracer pour :
+
+Automatiser la configuration réseau.
+Gérer des scénarios IoT avec des interactions simples.
+Créer des scripts de vérification pour l’apprentissage interactif.
+En pratiquant, vous pouvez même automatiser des simulations complexes comme des tests de protocoles de routage, des scénarios de cybersécurité, ou des pannes simulées pour observer la réaction du réseau.
+
+
+
+
+
+
+Dans Cisco Packet Tracer, le langage de programmation principal pour l'onglet "Programming" est JavaScript. Il n'est pas possible d'utiliser directement d'autres langages comme Python, Java, ou C++ dans cet environnement. Packet Tracer est conçu pour simuler des environnements réseau et IoT avec une prise en charge limitée pour la programmation, principalement pour les appareils IoT et pour automatiser certaines configurations.
+
+Cependant, voici quelques moyens de contourner cette limitation :
+
+1. Utilisation d’API Externes avec JavaScript
+Cisco Packet Tracer permet d'envoyer des requêtes HTTP depuis certains appareils IoT. Si vous avez un serveur externe qui exécute du code dans un autre langage (par exemple, un serveur Python), vous pouvez interagir avec ce serveur en envoyant des requêtes HTTP.
+
+Par exemple :
+
+Créez un serveur en Python ou Node.js sur votre ordinateur qui écoute les requêtes HTTP.
+Dans Packet Tracer, utilisez un script JavaScript pour envoyer des requêtes HTTP vers ce serveur.
+Exemple d'envoi de requête HTTP depuis JavaScript dans Packet Tracer :
+
+javascript
+Copier le code
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "http://localhost:5000/api/data", true);
+xhr.send();
+Ce code envoie une requête GET à un serveur local (exécuté en Python par exemple). Le serveur pourrait alors effectuer des tâches complexes et renvoyer une réponse que Packet Tracer peut utiliser.
+
+2. Automatisation Externe avec Python et Telnet/SSH
+Si vous souhaitez utiliser Python pour automatiser des configurations réseau dans Packet Tracer, vous pouvez installer Python sur votre machine et utiliser des bibliothèques comme Paramiko pour SSH ou Telnetlib pour Telnet. Ce code Python se connectera aux routeurs et switchs dans Packet Tracer via Telnet ou SSH et enverra des commandes.
+
+Exemple de script Python avec Telnet :
+
+python
+Copier le code
+import telnetlib
+
+host = "192.168.1.1"  # Adresse IP du routeur
+user = "admin"
+password = "cisco"
+
+tn = telnetlib.Telnet(host)
+
+tn.read_until(b"Username: ")
+tn.write(user.encode('ascii') + b"\n")
+tn.read_until(b"Password: ")
+tn.write(password.encode('ascii') + b"\n")
+
+tn.write(b"enable\n")
+tn.write(b"cisco\n")  # Mot de passe enable
+tn.write(b"configure terminal\n")
+tn.write(b"interface GigabitEthernet0/0\n")
+tn.write(b"ip address 192.168.1.1 255.255.255.0\n")
+tn.write(b"no shutdown\n")
+tn.write(b"exit\n")
+tn.write(b"end\n")
+tn.write(b"exit\n")
+
+print(tn.read_all().decode('ascii'))
+tn.close()
+Ce script en Python se connecte au routeur via Telnet et configure une adresse IP sur une interface. Cela simule un accès distant pour configurer les appareils réseau dans Packet Tracer.
+
+3. Simulation d’Appareils IoT avec d’autres Langages
+Si vous travaillez avec des concepts IoT, vous pouvez simuler des appareils externes en Python, Arduino (pour des capteurs physiques), ou d’autres environnements, puis envoyer les données collectées à Packet Tracer.
+
+En résumé, bien que Packet Tracer ne prenne en charge que JavaScript pour l'onglet "Programming", vous pouvez contourner cette limitation en utilisant des scripts externes en Python ou d'autres langages pour interagir avec les appareils Packet Tracer via Telnet, SSH, ou HTTP.
+
+
+
+
+
+

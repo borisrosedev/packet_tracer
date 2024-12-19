@@ -1,0 +1,210 @@
+= VLAN de quarantaine 
+
+== Introduction
+
+Le VLAN de quarantaine est une solution réseau utilisée pour isoler les appareils suspects ou non conformes aux politiques de sécurité de l’entreprise.
+
+=== ...
+
+Ce mécanisme est une pratique courante dans les environnements sécurisés, notamment dans les entreprises soucieuses de protéger leur réseau interne.
+
+
+== 1. Objectifs du VLAN de quarantaine
+
+=== Isolation des appareils non conformes :
+
+* Appareils infectés par des malwares.
+
+=== ...
+
+* Appareils qui ne respectent pas les règles de sécurité (antivirus obsolètes, absence de mise à jour, etc.).
+
+=== ...
+
+* Appareils inconnus ou non autorisés.
+
+=== Réduction des risques :
+
+
+* Empêcher la propagation de menaces comme les virus ou les attaques réseau.
+
+=== ...
+
+* Limiter l’accès de ces appareils au strict minimum (exemple : accès uniquement à un serveur de mise à jour ou d'antivirus).
+
+=== Conformité aux politiques de sécurité :
+
+* S’assurer que seuls les appareils conformes peuvent accéder au réseau principal.
+
+== 2. Caractéristiques d’un VLAN de quarantaine
+
+=== Isolation réseau complète :
+
+Les appareils dans ce VLAN ne doivent pas communiquer avec le reste du réseau sauf avec des ressources autorisées (ex. serveur de remédiation).
+
+=== Contrôle d’accès strict :
+
+Utilisation d’ACL (Access Control Lists) ou de pare-feux pour restreindre la communication.
+
+=== Surveillance renforcée :
+
+Surveillance active des appareils dans le VLAN pour détecter tout comportement anormal.
+
+== 3. Étapes pour implémenter un VLAN de quarantaine
+
+=== a. Créer le VLAN de quarantaine
+
+Attribuez un numéro de VLAN spécifique pour identifier ce VLAN. Exemple : VLAN 200.
+
+[source, bash]
+----
+Switch(config)# vlan 200
+Switch(config-vlan)# name Quarantine
+----
+
+
+=== b. Configurer une interface VLAN pour le routage (si nécessaire)
+
+Attribuez une adresse IP au VLAN pour permettre la communication avec des ressources spécifiques, comme un serveur de remédiation.
+
+[source, bash]
+----
+Switch(config)# interface vlan 200
+Switch(config-if)# ip address 192.168.200.1 255.255.255.0
+Switch(config-if)# no shutdown
+----
+
+
+== c. Configurer les ports des appareils suspects dans le VLAN 200
+
+Lorsqu’un appareil est identifié comme suspect, son port physique doit être placé dans le VLAN de quarantaine.
+
+[source, bash]
+----
+Switch(config)# interface FastEthernet 0/10
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 200
+Switch(config-if)# shutdown  # Si vous souhaitez désactiver temporairement le port
+----
+
+
+== d. Restreindre l’accès au VLAN de quarantaine
+
+Utilisez des Access Control Lists (ACL) pour limiter l’accès depuis ce VLAN.
+
+
+=== Exemple : 
+
+Autoriser uniquement l’accès à un serveur de remédiation (ex. 192.168.200.100).
+
+[source, bash]
+----
+Switch(config)# access-list 200 permit ip any host 192.168.200.100
+Switch(config)# access-list 200 deny ip any any
+----
+
+
+=== Appliquez cette ACL sur l’interface VLAN :
+
+[source, bash]
+----
+Switch(config)# interface vlan 200
+Switch(config-if)# ip access-group 200 in
+----
+
+
+== e. Configurer un DHCP spécifique pour le VLAN de quarantaine (optionnel)
+
+Pour simplifier l’administration, vous pouvez attribuer dynamiquement des adresses IP dans le VLAN de quarantaine via un serveur DHCP.
+
+=== ...
+
+[source, bash]
+----
+Router(config)# ip dhcp pool Quarantine
+Router(dhcp-config)# network 192.168.200.0 255.255.255.0
+Router(dhcp-config)# default-router 192.168.200.1
+Router(dhcp-config)# dns-server 8.8.8.8
+----
+
+
+== f. Activer des règles dans le pare-feu (si applicable)
+
+Si vous utilisez un pare-feu centralisé, configurez des règles pour restreindre les appareils dans le VLAN de quarantaine.
+
+=== Exemple :
+
+Bloquer tout le trafic sortant sauf vers un serveur de mise à jour ou d'antivirus.
+
+== 4. Automatiser la mise en quarantaine avec 802.1X
+
+Le VLAN de quarantaine peut être automatiquement attribué grâce à une authentification basée sur 802.1X. 
+
+=== ...
+
+Les appareils qui échouent à l’authentification 802.1X (ex. certificat invalide) ou ...
+
+=== ...
+
+ne répondent pas aux critères sont automatiquement placés dans le VLAN de quarantaine.
+
+
+=== Exemple de configuration avec Cisco ISE :
+
+* Configurer un serveur RADIUS pour gérer les authentifications.
+* Assigner le VLAN 200 comme VLAN par défaut pour les échecs 802.1X.
+
+== 5. Surveillance des appareils dans le VLAN de quarantaine
+
+=== SNMP : 
+
+Utilisez SNMP pour surveiller les appareils dans le VLAN.
+
+=== Syslog : 
+
+Configurez les logs pour enregistrer les ports transférés dans le VLAN de quarantaine.
+
+=== Monitoring avancé : 
+
+Utilisez des outils comme Wireshark ou un IDS/IPS pour détecter les anomalies.
+
+== 6. Exemple de scénario d’utilisation
+
+=== Étape 1 : 
+
+Un appareil sans antivirus à jour se connecte au réseau.
+
+=== Étape 2 : 
+
+Grâce à une solution NAC (Network Access Control), l’appareil est détecté et automatiquement déplacé dans le VLAN de quarantaine.
+
+=== Étape 3 : 
+
+Dans le VLAN de quarantaine, l’appareil ne peut accéder qu’à un serveur de mise à jour pour remédier à son problème.
+
+=== Étape 4 : 
+
+Une fois conforme, il peut être replacé dans son VLAN d’origine.
+
+== 7. Avantages d’un VLAN de quarantaine
+
+=== Sécurité renforcée : 
+
+Réduit les risques de propagation des menaces.
+
+=== Gestion centralisée : 
+
+Facilite l’identification et la correction des problèmes.
+
+=== Conformité : 
+
+Garantit que les appareils respectent les politiques de sécurité avant de rejoindre le réseau principal.
+
+== 8. Limitations
+
+* Nécessite une solution NAC ou un processus manuel pour identifier et isoler les appareils.
+
+=== ...
+
+* Si le VLAN de quarantaine n’est pas correctement configuré (ex. ACL insuffisantes), il peut être contourné par des appareils malveillants.
+

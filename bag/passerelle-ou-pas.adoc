@@ -1,0 +1,18 @@
+Cas où aucune passerelle par défaut n'est nécessaire :
+Si votre réseau est interne et que vous ne souhaitez que permettre la communication entre les VLANs 10, 20, et 30.
+Le routeur aura les sous-interfaces configurées pour chaque VLAN, ce qui permettra aux appareils dans chaque VLAN de communiquer entre eux si nécessaire, sans qu'il soit nécessaire d'ajouter une route par défaut vers l'extérieur.
+Cas où une passerelle par défaut est nécessaire :
+Si vous voulez que les appareils dans les VLANs puissent accéder à Internet ou à un autre réseau externe, alors une passerelle par défaut est nécessaire.
+Cette passerelle dirigerait le trafic vers un routeur ou une box qui est connecté à Internet.
+Exemple dans votre situation :
+Si vos VLANs sont totalement internes et que vous n'avez pas de connexion à l'extérieur (par exemple à un réseau Internet), vous n'avez pas besoin d'ajouter une passerelle par défaut sur votre routeur.
+
+Si, en revanche, votre routeur ISR4331 est connecté à un autre réseau (par exemple, une box Internet ou un autre routeur), et que vous voulez que les appareils puissent accéder à Internet, alors vous devez configurer une passerelle par défaut comme suit :
+
+bash
+Copier le code
+ip route 0.0.0.0 0.0.0.0 <IP de la box ou du routeur Internet>
+Conclusion :
+Si vous avez uniquement besoin de communication inter-VLAN (localement entre les VLANs), alors vous n'avez pas besoin d'une passerelle par défaut sur le routeur.
+Si vous avez besoin de connecter vos VLANs à l'extérieur (par exemple, vers Internet), alors une passerelle par défaut est nécessaire pour diriger ce trafic vers l'extérieur.
+Je vous recommande de vérifier si vous avez un besoin d'accès externe. Si ce n'est pas le cas, le routage inter-VLAN sera suffisant sans passerelle.

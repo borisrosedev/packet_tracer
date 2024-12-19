@@ -25,7 +25,12 @@ Les principales connexions disponibles dans Packet Tracer, ainsi que leurs utili
 Ce câble est utilisé pour connecter des appareils de types différents, par exemple :
 
 * Un ordinateur à un commutateur.
+
+=== ...
+
 * Un commutateur à un routeur.
+
+=== ...
 
 * Un ordinateur à un routeur (via une interface Ethernet).
 
@@ -44,7 +49,13 @@ C’est le type de connexion le plus couramment utilisé dans les réseaux locau
 Utilisé pour connecter des appareils du même type, par exemple :
 
 Un ordinateur à un autre ordinateur.
+
+=== ...
+
 Un commutateur à un autre commutateur.
+
+=== ...
+
 Un routeur à un autre routeur.
 
 
@@ -57,7 +68,11 @@ Ce câble inverse les signaux d'envoi et de réception pour permettre la communi
 
 === Description : 
 
-Ce câble est utilisé pour interconnecter des routeurs via des interfaces série. Les câbles série dans Packet Tracer incluent des interfaces DTE (Data Terminal Equipment) et DCE (Data Circuit-Terminating Equipment).
+Ce câble est utilisé pour interconnecter des routeurs via des interfaces série. 
+
+=== ...
+
+Les câbles série dans Packet Tracer incluent des interfaces DTE (Data Terminal Equipment) et DCE (Data Circuit-Terminating Equipment).
 
 === Utilisation :
 
@@ -78,13 +93,19 @@ Utilisé pour les connexions à très haute vitesse entre équipements réseau.
 
 Connexion entre deux routeurs ou commutateurs ayant des interfaces fibre optique.
 
+=== ...
+
 Transmission à longue distance avec des débits élevés et une faible latence.
 
 == Câble coaxial (Coaxial Cable)
 
 === Description : 
 
-Utilisé pour les connexions dans les réseaux câblés ou Wi-Fi avec certaines interfaces spécifiques. Ce câble est plus souvent vu dans des connexions de télécommunication.
+Utilisé pour les connexions dans les réseaux câblés ou Wi-Fi avec certaines interfaces spécifiques. 
+
+=== ...
+
+Ce câble est plus souvent vu dans des connexions de télécommunication.
 
 === Utilisation :
 
@@ -124,8 +145,8 @@ Utilisé pour connecter des périphériques de télécommunication, comme des t�
 
 === Utilisation :
 
-Connexion d'un modem à une ligne téléphonique pour des connexions dial-up.
-Connexion de téléphones analogiques à un système de téléphonie VoIP.
+* Connexion d'un modem à une ligne téléphonique pour des connexions dial-up.
+* Connexion de téléphones analogiques à un système de téléphonie VoIP.
 
 == Connexion cuivre direct (Copper Straight-Through)
 

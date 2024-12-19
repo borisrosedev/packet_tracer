@@ -1,0 +1,208 @@
+= Programming 
+
+== Introduction
+
+Le "programming" dans Cisco Packet Tracer permet aux utilisateurs de simuler des comportements de réseaux dynamiques en utilisant des scripts pour automatiser des actions ou tester des fonctionnalités réseau avancées. 
+
+
+=== Automatisation des configurations : 
+
+
+Permet d'automatiser la configuration des équipements (switchs, routeurs) via des scripts, facilitant le déploiement de grandes topologies.
+
+
+=== Simulation de comportements avancés : 
+
+Avec le langage de script intégré (comme JavaScript dans les versions récentes), il est possible de simuler des événements de réseau plus complexes, comme des pannes aléatoires, des changements de topologie, ou des attaques réseau pour des exercices de cybersécurité.
+
+=== Création de scénarios d'apprentissage : 
+
+
+Les instructeurs peuvent créer des scénarios interactifs pour les étudiants, où le script guide et vérifie les étapes de configuration ou de dépannage.
+
+
+=== Test de protocoles et d'algorithmes : 
+
+On peut simuler des scénarios de protocoles spécifiques (comme le routage dynamique ou le STP) et analyser leur comportement dans différentes conditions.
+
+=== Interactions avec des objets IoT : 
+
+Dans les versions récentes de Packet Tracer, il est possible d'utiliser le "programming" pour simuler des interactions entre dispositifs IoT, en automatisant leur réponse aux conditions du réseau.
+
+
+=== ...
+
+Le "programming" dans Packet Tracer est une fonctionnalité avancée qui permet d'ajouter du code pour simuler des comportements spécifiques dans une topologie réseau. 
+
+=== ...
+
+On utilise surtout JavaScript dans Packet Tracer pour automatiser certaines tâches et gérer des dispositifs intelligents (IoT) intégrés. 
+
+
+== Automatisation des Configurations de Réseau
+
+Vous pouvez écrire un script pour configurer automatiquement les routeurs et les switchs de votre réseau. 
+
+=== ...
+
+Par exemple, au lieu de configurer manuellement chaque routeur avec des commandes spécifiques, vous pouvez automatiser cette tâche :
+
+[source, javascript]
+----
+var devices = getAllDevices();
+for (var i = 0; i < devices.length; i++) {
+    if (devices[i].type == "Router") {
+        devices[i].cli.setCliText("enable");
+        devices[i].cli.setCliText("configure terminal");
+        devices[i].cli.setCliText("hostname Router" + i);
+        devices[i].cli.setCliText("end");
+    }
+}
+----
+
+Ce script parcourt tous les appareils dans la topologie et applique un nom unique à chaque routeur.
+
+
+== 2. Simulation d'Événements Dynamiques (Pannes, Changements)
+
+Pour simuler une panne de connexion ou un changement de topologie, on peut désactiver ou réactiver des interfaces ou des appareils selon un timing ou un événement :
+
+[source, javascript]
+----
+var router = findDeviceByName("Router1");
+if (router) {
+    router.interface(0).shutdown();
+    setTimeout(function() {
+        router.interface(0).noShutdown();
+    }, 10000);  // Redémarre l'interface après 10 secondes
+}
+----
+
+
+Ce script simule une panne temporaire en désactivant une interface d'un routeur pendant 10 secondes, ce qui peut aider à tester la redondance du réseau ou les protocoles de convergence comme OSPF.
+
+
+
+== 3. Création de Scénarios d'Apprentissage Interactifs
+
+
+Les formateurs peuvent créer des scénarios où les étudiants doivent effectuer des configurations spécifiques. 
+
+=== ...
+
+Le script peut vérifier automatiquement si la configuration est correcte et afficher des messages de guidage :
+
+[source, javascript]
+----
+function checkVlanConfig() {
+    var switch1 = findDeviceByName("Switch1");
+    if (switch1 && switch1.cli.getCliText().includes("VLAN 10")) {
+        alert("Bien joué ! Le VLAN 10 a été créé.");
+    } else {
+        alert("Attention, vous devez encore configurer VLAN 10.");
+    }
+}
+----
+
+
+Ce script vérifie si le VLAN 10 a été configuré sur un switch et donne un retour à l'étudiant.
+
+
+== 4. Interaction avec des Objets IoT
+
+
+Dans Packet Tracer, il est aussi possible de créer des scénarios IoT où des capteurs envoient des données ou où des actions sont déclenchées automatiquement. 
+
+=== ...
+
+Par exemple, on pourrait simuler l'activation d'une lumière si un capteur détecte un mouvement :
+
+[source, javascript]
+----
+var motionSensor = findDeviceByName("MotionSensor1");
+var light = findDeviceByName("Light1");
+
+motionSensor.onDetect = function() {
+    light.turnOn();
+};
+
+motionSensor.onClear = function() {
+    light.turnOff();
+};
+----
+
+
+Ici, lorsque le capteur de mouvement détecte une présence, la lumière s'allume, puis s'éteint quand il n'y a plus de mouvement.
+
+
+
+== 5. Test de Protocoles et Algorithmes Réseau
+
+Vous pouvez simuler des protocoles de routage et tester leur comportement dans différentes conditions. 
+
+=== ...
+
+Par exemple, en modifiant les coûts des liens de manière dynamique pour observer l'effet sur un protocole comme OSPF :
+
+[source, javascript]
+----
+var link = getLink("Router1", "Router2");
+link.setCost(10);  // Augmente le coût du lien
+setTimeout(function() {
+    link.setCost(1);  // Rétablit le coût initial après 15 secondes
+}, 15000);
+----
+
+
+Ce script change temporairement le coût d’un lien entre deux routeurs, permettant de voir comment le routage OSPF s'ajuste.
+
+
+
+== 6. Scripts pour l'Évaluation de la Sécurité (Simulation d'Attaques)
+
+
+On peut utiliser des scripts pour simuler des scénarios de cybersécurité, comme des attaques DoS (Déni de Service) ou des scans de réseau, pour évaluer la sécurité d'une topologie :
+
+[source, javascript]
+----
+var attacker = findDeviceByName("AttackerPC");
+var target = findDeviceByName("Server");
+
+function floodAttack() {
+    for (var i = 0; i < 100; i++) {
+        attacker.sendPing(target.ip);
+    }
+}
+
+floodAttack();
+----
+
+Ce script simule une attaque DoS en envoyant de nombreux paquets ping vers un serveur cible, pour montrer aux étudiants comment détecter et réagir à ce type d'attaque.
+
+
+== 7. Gestion des Erreurs et Notifications
+
+Vous pouvez ajouter des fonctions de vérification qui alertent lorsqu'un problème survient dans la topologie, comme un appareil déconnecté :
+
+[source, javascript]
+----
+function monitorConnection() {
+    var router1 = findDeviceByName("Router1");
+    var router2 = findDeviceByName("Router2");
+
+    if (!router1.interface(0).isConnectedTo(router2.interface(0))) {
+        alert("La connexion entre Router1 et Router2 est interrompue !");
+    }
+}
+
+setInterval(monitorConnection, 5000);  // Vérifie toutes les 5 secondes
+----
+
+
+Ce script vérifie régulièrement la connexion entre deux routeurs et avertit si elle est interrompue, utile pour surveiller les problèmes réseau.
+
+
+
+
+
+

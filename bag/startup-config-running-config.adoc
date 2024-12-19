@@ -1,0 +1,106 @@
+= Running-Config et Startup-Config
+
+== Introduction
+
+Dans Cisco Packet Tracer, comme dans les équipements Cisco réels, il y a deux types de configurations principales :
+
+
+=== Running Configuration (running-config) : 
+
+
+C'est la configuration actuellement active en mémoire vive (RAM) du dispositif. 
+
+
+=== ...
+
+Toute modification effectuée sur le routeur ou le switch est immédiatement appliquée à la configuration en cours d’exécution (running-config). 
+
+
+=== ...
+
+
+Cependant, cette configuration n'est pas permanente et sera perdue si le dispositif redémarre, à moins qu’elle ne soit sauvegardée.
+
+
+
+=== Startup Configuration (startup-config) : 
+
+C'est la configuration sauvegardée en mémoire non volatile (NVRAM), qui persiste même après un redémarrage. 
+
+
+=== ...
+
+
+Lorsqu’un routeur ou un switch redémarre, il charge la startup-config dans la running-config. 
+
+
+=== ...
+
+
+Il faut sauvegarder la running-config dans la startup-config pour que les changements soient conservés après un redémarrage.
+
+
+== Exporter et Importer les Configurations Startup et Running
+
+Dans Cisco Packet Tracer, les fichiers de configuration peuvent être exportés ...
+
+=== ...
+
+ou importés depuis la CLI en copiant et collant le contenu, comme expliqué précédemment, ...
+
+=== ...
+
+mais pour sauvegarder de façon permanente, on suit un processus de copie entre running-config et startup-config.
+
+
+== Commandes principales pour gérer les fichiers de configuration
+
+Copier la Running Configuration vers la Startup Configuration
+
+
+Cela sauvegarde les modifications pour qu'elles persistent après un redémarrage.
+
+[source, bash]
+----
+Switch# copy running-config startup-config
+----
+
+Copier la Startup Configuration vers la Running Configuration
+
+=== ...
+
+Cela charge la configuration sauvegardée dans la running-config, en cas de besoin, sans redémarrer le dispositif.
+
+[source, bash]
+----
+Switch# copy startup-config running-config
+----
+
+
+=== Afficher les configurations
+
+Running Configuration : Voir la configuration active.
+
+[source, bash]
+----
+Switch# show running-config
+----
+
+
+Startup Configuration : Voir la configuration sauvegardée qui sera appliquée au redémarrage.
+
+[source, bash]
+----
+Switch# show startup-config
+----
+
+Exporter la configuration depuis Packet Tracer
+
+=== Sauvegarde externe : 
+
+Une fois affichée avec show running-config ou show startup-config, ...
+
+=== ...
+
+vous pouvez copier manuellement le contenu et le coller dans un fichier texte avec une extension .txt ou .cfg.
+

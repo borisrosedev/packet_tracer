@@ -1,0 +1,120 @@
+= SSH et Cisco
+
+== Introduction
+
+Ces commandes configurent l’accès SSH (Secure Shell) sur un switch Cisco.
+
+=== ...
+
+SSH est un protocole de communication sécurisé qui chiffre les données, offrant un accès distant plus sûr comparé à Telnet, qui envoie les informations en clair.
+
+
+
+=== Étapes pour configurer SSH
+
+Définir le nom d'hôte du switch :
+
+[source, bash]
+Switch(config)# hostname MonSwitch
+
+=== ...
+
+Cette commande définit le nom du switch (ici, MonSwitch), ce qui est requis pour générer des clés cryptographiques SSH. 
+
+=== ...
+
+Le nom d'hôte fait partie de l'identité du dispositif et aide à établir une session SSH sécurisée.
+
+Configurer le nom de domaine :
+
+[source, bash]
+----
+Switch(config)# ip domain-name exemple.com
+----
+Cette commande définit le nom de domaine du switch (ici, exemple.com). 
+
+=== ...
+
+Ce nom de domaine, combiné avec le nom d'hôte, est utilisé pour générer les clés RSA. 
+
+=== ...
+
+SSH nécessite un nom de domaine pour générer des clés.
+
+
+
+=== Générer les clés RSA pour SSH :
+
+[source, bash]
+----
+Switch(config)# crypto key generate rsa
+----
+
+=== ...
+
+Cette commande crée des clés RSA, qui sont nécessaires pour l’authentification et le chiffrement des connexions SSH. 
+
+=== ...
+
+Le switch vous demandera de spécifier la taille de la clé, généralement 1024 ou 2048 bits.
+
+=== ...
+
+Une taille de clé plus élevée (par exemple, 2048 bits) fournit une sécurité renforcée.
+
+
+== Configurer la ligne VTY pour utiliser uniquement SSH :
+
+[source, bash]
+----
+Switch(config)# line vty 0 4
+Switch(config-line)# transport input ssh
+----
+
+Les lignes VTY (line vty 0 4) sont les lignes virtuelles qui permettent l'accès distant au switch.
+
+=== transport input ssh : 
+
+Cette commande configure les lignes VTY pour n’accepter que les connexions SSH, excluant ainsi les connexions Telnet moins sécurisées.
+
+=== Configurer l’authentification locale pour SSH :
+
+[source, bash]
+----
+Switch(config-line)# login local
+----
+
+Cette commande exige que les utilisateurs SSH s'authentifient avec un nom d'utilisateur et un mot de passe locaux définis sur le switch.
+
+=== ...
+
+Pour que cela fonctionne, vous devez avoir créé des utilisateurs locaux avec la commande username.
+
+
+=== Quitter le mode de configuration des lignes VTY :
+
+[source, bash]
+----
+Switch(config-line)# exit
+----
+
+
+Cette commande permet de revenir au mode de configuration globale après avoir configuré les lignes VTY.
+
+
+=== Exemples supplémentaires
+
+Création d'un utilisateur local (nécessaire pour l'accès SSH) :
+
+[source, bash]
+----
+Switch(config)# username admin privilege 15 secret MonMotDePasse
+----
+
+
+Cette commande crée un utilisateur admin avec un mot de passe sécurisé MonMotDePasse et des privilèges de niveau 15 (le niveau le plus élevé pour un accès complet au dispositif).
+
+
+
+
+

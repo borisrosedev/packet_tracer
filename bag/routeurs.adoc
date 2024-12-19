@@ -5,7 +5,11 @@
 
 == Introduction
 
-Cisco Packet Tracer, un outil de simulation de réseau, plusieurs types de routeurs sont disponibles pour simuler des environnements réseau et apprendre à configurer des réseaux. 
+Cisco Packet Tracer, un outil de simulation de réseau, plusieurs types de routeurs ...
+
+=== ...
+
+sont disponibles pour simuler des environnements réseau et apprendre à configurer des réseaux. 
 
 === ...
 
@@ -19,10 +23,19 @@ Le Cisco 1841 est un routeur de la gamme ISR (Integrated Services Router) conçu
 
 === Caractéristiques :
 
-Il dispose de deux interfaces Fast Ethernet (10/100 Mbps) et de plusieurs emplacements pour modules (WIC, HWIC) permettant d'ajouter des interfaces série, des cartes voix, ou d'autres types de connectivité.
+Il dispose de deux interfaces Fast Ethernet (10/100 Mbps) et de plusieurs emplacements ...
 
+=== ...
+
+pour modules (WIC, HWIC) permettant d'ajouter des interfaces série, des cartes voix, ou d'autres types de connectivité.
+
+
+=== ...
 
 Idéal pour apprendre la configuration de base des routeurs et les réseaux simples.
+
+
+
 Utilisation : Routage de base, configuration de VLANs, routage statique et dynamique (RIP, OSPF, EIGRP).
 
 == Routeurs de la série 1941
@@ -72,26 +85,57 @@ Le Cisco 2911 est un routeur de la série ISR de deuxième génération, offrant
 === Caractéristiques :
 
 Supporte Gigabit Ethernet, des interfaces WAN, des modules d'extension pour services VPN, et des fonctionnalités de sécurité plus avancées.
+
+
+=== ...
+
 Compatible avec les nouveaux services de sécurité comme le firewall intégré et les services de voix et vidéo sur IP.
-Utilisation : Conçu pour des configurations de routage plus complexes, avec un support pour la téléphonie IP, la sécurité renforcée, et le VPN.
-5. Routeurs de la série 4321
-Description : Le Cisco 4321 fait partie de la série ISR 4000, conçue pour offrir des performances élevées et des services intégrés pour les entreprises de taille moyenne à grande.
-Caractéristiques :
+
+=== Utilisation : 
+
+Conçu pour des configurations de routage plus complexes, avec un support pour la téléphonie IP, la sécurité renforcée, et le VPN.
+
+
+== Routeurs de la série 4321
+
+=== Description : 
+
+Le Cisco 4321 fait partie de la série ISR 4000, conçue pour offrir des performances élevées et des services intégrés pour les entreprises de taille moyenne à grande.
+
+=== Caractéristiques :
+
 Supporte Gigabit Ethernet, modules de sécurité, VPN, et des interfaces de connectivité avancées.
+
+=== ...
+
 Permet d'implémenter des fonctionnalités de haute performance avec la prise en charge de services virtualisés (NFV).
-Utilisation : Utilisé dans des environnements avec des besoins de routage à haute performance, avec une intégration de services de sécurité, de VPN, et de QoS pour la gestion du trafic.
+
+=== Utilisation : 
+
+Utilisé dans des environnements avec des besoins de routage à haute performance, avec une intégration de services de sécurité, de VPN, et de QoS pour la gestion du trafic.
 
 == Routeurs de la série 819
 
 === Description : 
 
-Le Cisco 819 est un routeur compact destiné aux déploiements dans les environnements industriels ou mobiles, souvent utilisé pour des applications M2M (Machine-to-Machine).
+Le Cisco 819 est un routeur compact destiné aux déploiements dans les environnements industriels ou mobiles, ...
+
+=== ...
+
+souvent utilisé pour des applications M2M (Machine-to-Machine).
 
 === Caractéristiques :
 
 Compact, il supporte des connexions cellulaires (3G/4G), ce qui le rend idéal pour les environnements éloignés où l'accès réseau traditionnel est difficile.
+
+=== ...
+
 Utilisé pour des connexions de faible volume avec des modules WAN intégrés.
-Utilisation : Routage mobile, M2M, connexion en environnements distants ou industriels.
+
+
+=== Utilisation : 
+
+Routage mobile, M2M, connexion en environnements distants ou industriels.
 
 == Routeurs de la série 4221
 
@@ -112,7 +156,11 @@ Conçu pour les grandes entreprises avec des besoins de routage complexes et des
 
 === Description : 
 
-Ce type de routeur est utilisé pour simuler une connexion au réseau Cloud dans Packet Tracer, représentant généralement des connexions Internet ou externes à l'environnement local.
+Ce type de routeur est utilisé pour simuler une connexion au réseau Cloud dans Packet Tracer, ...
+
+=== ...
+
+représentant généralement des connexions Internet ou externes à l'environnement local.
 
 === Caractéristiques :
 
@@ -125,10 +173,6 @@ Il permet de configurer des connexions PPP, Frame Relay, ou autres technologies 
 === Utilisation : 
 
 Simulation de connexion à Internet ou d’autres réseaux externes.
-
-
-
-
 
 
 == Routeurs de la série 1240 (Cisco 1240AG Wireless Access Point)

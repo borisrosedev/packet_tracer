@@ -14,24 +14,36 @@ Les Access Control Lists (ACLs) sont des outils essentiels pour contrôler le tr
 
 == Scénario de base
 
-Vous avez un réseau simple avec un routeur, plusieurs PCs connectés via un switch, et vous voulez configurer des ACLs pour permettre ou bloquer l'accès à certains services ou réseaux.
+Vous avez un réseau simple avec un routeur, plusieurs PCs connectés via un switch, ...
+
+=== ...
+
+et vous voulez configurer des ACLs pour permettre ou bloquer l'accès à certains services ou réseaux.
 
 === Création du réseau
 
 Ajoutez un routeur, un switch, et plusieurs PCs dans Packet Tracer.
 Reliez les PCs au switch et connectez le switch au routeur.
+
+=== ...
+
 Configurez les adresses IP sur chaque appareil (ex : 192.168.1.0/24 pour les PCs).
 
 
 === Accéder à la CLI du routeur
 
 Cliquez sur le routeur et accédez à l'onglet CLI.
+
+=== ...
+
 Entrez en mode privilégié avec la commande enable, puis en mode de configuration globale avec configure terminal.
 
 
 == Configuration d'une ACL standard
 
 Les ACLs standards contrôlent le trafic basé uniquement sur l'adresse IP source. 
+
+=== ...
 
 Vous pouvez autoriser ou bloquer des paquets en fonction de leur adresse IP source.
 
@@ -51,10 +63,14 @@ access-list 1 deny 192.168.1.10
 access-list 1 permit any
 ----
 
-=== ...
 
-Ici :
+
+=== Ici :
+
+
 La première ligne bloque le trafic venant de l'adresse IP 192.168.1.10.
+
+
 La deuxième ligne permet tout autre trafic.
 
 
@@ -84,6 +100,7 @@ Cela signifie que le trafic entrant sur l'interface gig0/1 sera filtré par l'AC
 == Configuration d'une ACL étendue
 
 Les ACLs étendues permettent de filtrer le trafic en fonction de plusieurs critères, comme:
+
 [%step]
 * l'adresse IP source, 
 * l'adresse IP destination, 
@@ -103,6 +120,9 @@ access-list 100 deny tcp host 192.168.1.10 any eq 80
 access-list 100 permit ip any any
 ----
 La première ligne bloque le trafic TCP provenant de l'IP 192.168.1.10 à destination de n'importe quelle IP sur le port 80 (HTTP).
+
+=== ...
+
 La deuxième ligne permet tout autre trafic.
 === ...
 

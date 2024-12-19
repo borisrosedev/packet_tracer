@@ -1,0 +1,71 @@
+= Sous-interface et NAT 
+
+== Introducion
+
+Si tu n'as pas défini d'adresse IP sur l'interface physique du routeur (seulement sur les sous-interfaces), tu peux toujours établir une connexion avec le PT Cloud en suivant cette méthode :
+
+
+== Méthode avec les sous-interfaces uniquement
+
+Configurer la connexion entre les sous-interfaces et le PT Cloud via une sous-interface dédiée pour Internet
+
+=== ...
+
+Crée une sous-interface dédiée pour la connexion au PT Cloud et configure une adresse IP sur cette sous-interface dans le même sous-réseau que le PT Cloud.
+
+=== ...
+
+Exemple de configuration pour la sous-interface connectée au PT Cloud (par exemple, VLAN 99 pour Internet) :
+
+[source, bash]
+----
+Router(config)# interface gigabitethernet 0/0.99
+Router(config-subif)# encapsulation dot1Q 99
+Router(config-subif)# ip address 192.168.99.2 255.255.255.0
+Router(config-subif)# no shutdown
+----
+
+2
+Configurer le PT Cloud pour utiliser le même sous-réseau
+
+Configure l’adresse IP sur le PT Cloud pour qu’il corresponde au même sous-réseau (par exemple, 192.168.99.1 si la sous-interface du routeur est 192.168.99.2).
+Configurer une route par défaut pour rediriger le trafic vers Internet
+
+Ajoute une route par défaut sur le routeur qui pointe vers l’adresse IP de l’interface du PT Cloud (dans cet exemple, 192.168.99.1).
+bash
+Copier le code
+Router(config)# ip route 0.0.0.0 0.0.0.0 192.168.99.1
+Configurer NAT pour les sous-interfaces connectées aux VLANs
+
+Pour que les dispositifs des VLANs internes puissent accéder à Internet, configure NAT en désignant la sous-interface connectée au PT Cloud comme interface NAT extérieure et les sous-interfaces des VLANs comme interfaces NAT intérieures.
+
+Crée une ACL pour les sous-réseaux des VLANs internes :
+
+bash
+Copier le code
+Router(config)# access-list 1 permit 192.168.10.0 0.0.0.255
+Router(config)# access-list 1 permit 192.168.20.0 0.0.0.255
+Configure la sous-interface du PT Cloud pour NAT extérieur et les autres sous-interfaces pour NAT intérieur :
+
+bash
+Copier le code
+Router(config)# interface gigabitethernet 0/0.99
+Router(config-if)# ip nat outside
+Router(config-if)# exit
+
+Router(config)# interface gigabitethernet 0/0.10
+Router(config-if)# ip nat inside
+Router(config-if)# exit
+
+Router(config)# interface gigabitethernet 0/0.20
+Router(config-if)# ip nat inside
+Router(config-if)# exit
+Configure la règle NAT pour que le trafic des sous-réseaux internes soit traduit en utilisant l'adresse IP de la sous-interface connectée au PT Cloud :
+
+bash
+Copier le code
+Router(config)# ip nat inside source list 1 interface gigabitethernet 0/0.99 overload
+Vérifier la connectivité
+
+Teste la connectivité depuis un dispositif interne connecté aux VLANs pour vérifier que le NAT et la route par défaut fonctionnent, en faisant un ping vers une adresse simulée ou extérieure.
+En configurant une sous-interface dédiée pour la connexion au PT Cloud, tu peux permettre aux dispositifs des sous-interfaces internes de communiquer avec Internet sans avoir besoin d’une adresse IP sur l’interface physique principale.
